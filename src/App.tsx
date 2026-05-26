@@ -31,7 +31,7 @@ interface BackendIncidentPayload {
   longitude?: number;
   status?: string;
   reporterInfo?: {
-    yourName?: string;
+  yourName?: string;
   };
 }
 // SOCKET URL
