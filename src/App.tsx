@@ -212,24 +212,92 @@ export default function App(): React.JSX.Element {
     }
   };
   // MANUAL ALERT SUBMIT
-  const handleManualAlertSubmit = (e: React.FormEvent) => {
+  const handleManualAlertSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const fakeIncident: SOSAlertPayload = {
-      eventId:
-        "MANUAL-" + Math.random().toString(36).substr(2, 5).toUpperCase(),
-      victim: "Command Center Override",
-      location: {
-        lat: parseFloat(manualLat),
-        lng: parseFloat(manualLng),
-      },
+
+    const fakeIncident = {
+      incidentCategory: "critical",
+      incidentType: manualType.toLowerCase(),
+      incidentDate: new Date().toISOString(),
+      locationName: "Command Center Override",
+      latitude: parseFloat(manualLat),
+      longitude: parseFloat(manualLng),
+      description: `Manual override alert for ${manualType} injected from Command Center.`,
       status: "PENDING",
-      incidentCategory: manualType,
+      attachedFilePath: "",
+
+      suspectInfo: JSON.stringify({
+        name: "",
+        age: "",
+        gender: "",
+        contact: "",
+      }),
+      reporterInfo: JSON.stringify({
+        name: "Command Center",
+        yourName: "Command Center",
+        contact: "System Override",
+        isAnonymous: false,
+      }),
     };
-    setCriticalAlerts((prev) => [fakeIncident, ...prev]);
-    setMapCenter([fakeIncident.location.lat, fakeIncident.location.lng]);
-    setCurrentTab("incidents");
-    alert(" Manual incident broadcasted successfully!");
+
+    try {
+      const response = await fetch("http://192.168.43.132:8000/api/incidents", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(fakeIncident),
+      });
+
+      const responseText = await response.text();
+      let resData;
+
+      try {
+        resData = JSON.parse(responseText);
+      } catch (e) {
+        resData = { error: responseText };
+      }
+
+      if (response.ok) {
+        const backendObject = resData.data || resData.incident || resData;
+
+        // CRITICAL FIX: Structure the object to include fields your frontend layout relies on
+        const dataToSave = {
+          ...backendObject, // Appends database fields like _id, createdAt, etc.
+          incidentCategory:
+            backendObject.incidentCategory || fakeIncident.incidentCategory,
+          incidentType: backendObject.incidentType || fakeIncident.incidentType,
+          incidentDate: backendObject.incidentDate || fakeIncident.incidentDate,
+          locationName: backendObject.locationName || fakeIncident.locationName,
+          description: backendObject.description || fakeIncident.description,
+          status: backendObject.status || fakeIncident.status,
+
+          // Mocking fields that your client cards or maps might be searching for
+          eventId: backendObject._id || "MANUAL-OVERRIDE",
+          victim: "Command Center Override",
+
+          // This stops your map/card components from reading 'undefined' properties
+          location: {
+            lat: parseFloat(manualLat),
+            lng: parseFloat(manualLng),
+          },
+        };
+
+        // Safely update state without crashing rendering routines
+        setCriticalAlerts((prev) => [dataToSave, ...prev]);
+        setMapCenter([parseFloat(manualLat), parseFloat(manualLng)]);
+        setCurrentTab("incidents");
+
+        setManualLat("");
+        setManualLng("");
+      } else {
+        console.log("BACKEND FAILED RAW OUTPUT:", responseText);
+        alert(`Save failed: ${resData.error || "Check backend console"}`);
+      }
+    } catch (error) {
+      console.error("Broadcast network error:", error);
+      alert("Could not establish a connection with the backend server.");
+    }
   };
+
   // DELETE INCIDENT
   const handleDelete = async (eventId: string) => {
     if (!window.confirm("Are you sure you want to delete this incident?")) {
