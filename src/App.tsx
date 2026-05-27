@@ -31,7 +31,7 @@ interface BackendIncidentPayload {
   longitude?: number;
   status?: string;
   reporterInfo?: {
-  yourName?: string;
+    yourName?: string;
   };
 }
 // SOCKET URL
@@ -230,6 +230,27 @@ export default function App(): React.JSX.Element {
     setCurrentTab("incidents");
     alert(" Manual incident broadcasted successfully!");
   };
+  // DELETE INCIDENT
+  const handleDelete = async (eventId: string) => {
+    if (!window.confirm("Are you sure you want to delete this incident?")) {
+      return;
+    }
+    try {
+      const response = await fetch(
+        `${SOCKET_SERVER_URL}/api/incidents/${eventId}`,
+        {
+          method: "DELETE",
+        },
+      );
+      if (response.ok) {
+        setCriticalAlerts((prev) =>
+          prev.filter((alert) => alert.eventId !== eventId),
+        );
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
   return (
     <div
       onClick={() => {
@@ -405,6 +426,15 @@ export default function App(): React.JSX.Element {
                     >
                       <ExternalLink size={12} />
                       Maps
+                    </button>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDelete(alert.eventId);
+                      }}
+                      className="px-3 py-1.5 rounded-md bg-red-600 hover:bg-red-700 text-white text-xs font-bold transition-colors"
+                    >
+                      Delete
                     </button>
                   </div>
                 </div>
