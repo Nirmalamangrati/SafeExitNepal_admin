@@ -4,6 +4,9 @@ import { ShieldAlert, ExternalLink } from "lucide-react";
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
+import { AnalyticsTab } from "./components/AnalyticsTab.tsx";
+import { ResourcesTab } from "./components/ResourcesTab";
+import { ManualTab } from "./components/Manual.tsx";
 const customMarkerIcon = new L.Icon({
   iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
   shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
@@ -545,146 +548,26 @@ export default function App(): React.JSX.Element {
         )}
         {/* RESOURCES */}
         {currentTab === "resources" && (
-          <div className="grid md:grid-cols-2 gap-6">
-            {/* SHELTERS */}
-            <div className="bg-[#111c40] rounded-xl p-6 border border-slate-800">
-              <h2 className="font-black mb-5">Shelter Management</h2>
-              <div className="space-y-4">
-                {shelters.map((s) => (
-                  <div key={s.id} className="bg-[#0b132b] p-4 rounded-xl">
-                    <h3 className="font-bold">{s.name}</h3>
-                    <p className="text-sm text-slate-400">
-                      Amenities: {s.amenities}
-                    </p>
-                    <p className="text-sm">Capacity: {s.capacity}</p>
-                    <span
-                      className={`text-xs font-bold ${
-                        s.status === "Full"
-                          ? "text-red-400"
-                          : "text-emerald-400"
-                      }`}
-                    >
-                      {s.status}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-            {/* TEAMS */}
-            <div className="bg-[#111c40] rounded-xl p-6 border border-slate-800">
-              <h2 className="font-black mb-5">Rescue Teams</h2>
-
-              <div className="space-y-4">
-                {teams.map((t) => (
-                  <div key={t.id} className="bg-[#0b132b] p-4 rounded-xl">
-                    <h3 className="font-bold">{t.name}</h3>
-                    <p className="text-sm text-slate-400">
-                      Contact: {t.contact}
-                    </p>
-                    <p className="text-sm">Crew Members: {t.members}</p>
-                    <span className="text-xs font-bold text-cyan-400">
-                      {t.status}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
+          <ResourcesTab shelters={shelters} teams={teams} />
         )}
 
         {/* ANALYTICS */}
         {currentTab === "analytics" && (
-          <div className="bg-[#111c40] rounded-xl border border-slate-800 p-6">
-            <h2 className="font-black mb-6">Incident Analytics</h2>
-
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-              <div className="bg-red-950 p-5 rounded-xl text-center">
-                <h3 className="text-3xl font-black">
-                  {criticalAlerts.filter((a) => a.status === "PENDING").length}
-                </h3>
-
-                <p className="text-red-400 text-sm">Pending</p>
-              </div>
-
-              <div className="bg-blue-950 p-5 rounded-xl text-center">
-                <h3 className="text-3xl font-black">
-                  {criticalAlerts.filter((a) => a.status === "APPROVED").length}
-                </h3>
-
-                <p className="text-blue-400 text-sm">Approved</p>
-              </div>
-
-              <div className="bg-amber-950 p-5 rounded-xl text-center">
-                <h3 className="text-3xl font-black">
-                  {
-                    criticalAlerts.filter(
-                      (a) => a.status === "ESCALATED_TO_POLICE",
-                    ).length
-                  }
-                </h3>
-
-                <p className="text-amber-400 text-sm">Escalated</p>
-              </div>
-
-              <div className="bg-emerald-950 p-5 rounded-xl text-center">
-                <h3 className="text-3xl font-black">
-                  {criticalAlerts.filter((a) => a.status === "RESOLVED").length}
-                </h3>
-
-                <p className="text-emerald-400 text-sm">Resolved</p>
-              </div>
-            </div>
-          </div>
+          <AnalyticsTab criticalAlerts={criticalAlerts} />
         )}
 
         {/* MANUAL */}
+        {/* MANUAL */}
         {currentTab === "manual" && (
-          <form
-            onSubmit={handleManualAlertSubmit}
-            className="bg-[#111c40] rounded-xl border border-slate-800 p-6 max-w-xl mx-auto space-y-5"
-          >
-            <h2 className="text-xl font-black">Manual Incident Override</h2>
-            <div>
-              <label className="text-sm font-bold">Incident Type</label>
-              <select
-                value={manualType}
-                onChange={(e) => setManualType(e.target.value)}
-                className="w-full bg-[#0b132b] border border-slate-700 rounded-xl p-3 mt-2"
-              >
-                <option value="FLOOD">FLOOD</option>
-                <option value="LANDSLIDE">LANDSLIDE</option>
-                <option value="EARTHQUAKE">EARTHQUAKE</option>
-
-                <option value="FIRE">FIRE</option>
-              </select>
-            </div>
-            <div>
-              <label className="text-sm font-bold">Latitude</label>
-
-              <input
-                type="text"
-                value={manualLat}
-                onChange={(e) => setManualLat(e.target.value)}
-                className="w-full bg-[#0b132b] border border-slate-700 rounded-xl p-3 mt-2"
-              />
-            </div>
-            <div>
-              <label className="text-sm font-bold">Longitude</label>
-
-              <input
-                type="text"
-                value={manualLng}
-                onChange={(e) => setManualLng(e.target.value)}
-                className="w-full bg-[#0b132b] border border-slate-700 rounded-xl p-3 mt-2"
-              />
-            </div>
-            <button
-              type="submit"
-              className="w-full bg-red-600 hover:bg-red-700 py-3 rounded-xl font-black"
-            >
-              Inject & Broadcast Alert
-            </button>
-          </form>
+          <ManualTab
+            manualType={manualType}
+            setManualType={setManualType}
+            manualLat={manualLat}
+            setManualLat={setManualLat}
+            manualLng={manualLng}
+            setManualLng={setManualLng}
+            handleManualAlertSubmit={handleManualAlertSubmit}
+          />
         )}
       </main>
     </div>
