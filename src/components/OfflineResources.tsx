@@ -1,4 +1,3 @@
-// src/components/OfflineResources.tsx
 import React, { useState } from "react";
 
 interface OfflineResource {
@@ -53,6 +52,14 @@ export const OfflineResources: React.FC = () => {
   const handleDeleteRes = (id: string | number) => {
     setOfflineResources(offlineResources.filter((r) => r.id !== id));
   };
+  const handleEditRes = (id: string | number) => {
+    const resToEdit = offlineResources.find((r) => r.id === id);
+    if (!resToEdit) return;
+    setNewResTitle(resToEdit.title);
+    setNewResVersion(resToEdit.version);
+    setNewResSize(resToEdit.size);
+    setNewResStatus(resToEdit.status);
+  };
 
   return (
     <div className="bg-[#111c40] rounded-xl p-6 border border-slate-800 space-y-6">
@@ -60,8 +67,6 @@ export const OfflineResources: React.FC = () => {
         <h2 className="font-black text-white text-lg mb-4">
           Offline Resources
         </h2>
-
-        {/* थप्ने फर्म */}
         <form
           onSubmit={handleAddOfflineResource}
           className="bg-[#0b132b] p-4 rounded-xl border border-slate-800 mb-4 space-y-3"
@@ -93,7 +98,14 @@ export const OfflineResources: React.FC = () => {
             />
             <select
               value={newResStatus}
-              onChange={(e) => setNewResStatus(e.target.value as any)}
+              onChange={(e) =>
+                setNewResStatus(
+                  e.target.value as
+                    | "Synced"
+                    | "Update Available"
+                    | "Downloaded",
+                )
+              }
               className="w-full bg-[#111c40] border border-slate-700 rounded-lg p-2 text-sm text-white focus:outline-none focus:border-indigo-500"
             >
               <option value="Synced">Synced</option>
@@ -109,7 +121,6 @@ export const OfflineResources: React.FC = () => {
           </button>
         </form>
 
-        {/* सूची */}
         <div className="space-y-3 max-h-[250px] overflow-y-auto pr-1">
           {offlineResources.map((res) => (
             <div
@@ -132,6 +143,12 @@ export const OfflineResources: React.FC = () => {
                   {res.status}
                 </span>
               </div>
+              <button
+                onClick={() => handleEditRes(res.id)}
+                className="text-slate-500 hover:text-red-400 text-xs p-1"
+              >
+                Edit
+              </button>
               <button
                 onClick={() => handleDeleteRes(res.id)}
                 className="text-slate-500 hover:text-red-400 text-xs p-1"

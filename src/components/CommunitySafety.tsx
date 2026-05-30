@@ -1,4 +1,3 @@
-// src/components/CommunitySafety.tsx
 import React, { useState } from "react";
 
 interface SafetyZone {
@@ -42,6 +41,15 @@ export const CommunitySafety: React.FC = () => {
     setSafetyZones([newZone, ...safetyZones]);
     setNewZoneArea("");
     setNewZonePatrol("");
+    setNewZoneRisk("Low");
+  };
+
+  const handleEditZone = (id: string | number) => {
+    const zoneToEdit = safetyZones.find((z) => z.id === id);
+    if (!zoneToEdit) return;
+    setNewZoneArea(zoneToEdit.area);
+    setNewZonePatrol(zoneToEdit.patrolStatus);
+    setNewZoneRisk(zoneToEdit.riskLevel);
   };
 
   const handleDeleteZone = (id: string | number) => {
@@ -52,8 +60,6 @@ export const CommunitySafety: React.FC = () => {
     <div className="bg-[#111c40] rounded-xl p-6 border border-slate-800 space-y-6">
       <div>
         <h2 className="font-black text-white text-lg mb-4">Community Safety</h2>
-
-        {/* थप्ने फर्म */}
         <form
           onSubmit={handleAddSafetyZone}
           className="bg-[#0b132b] p-4 rounded-xl border border-slate-800 mb-4 space-y-3"
@@ -78,7 +84,9 @@ export const CommunitySafety: React.FC = () => {
             />
             <select
               value={newZoneRisk}
-              onChange={(e) => setNewZoneRisk(e.target.value as any)}
+              onChange={(e) =>
+                setNewZoneRisk(e.target.value as "Low" | "Medium" | "High")
+              }
               className="w-full bg-[#111c40] border border-slate-700 rounded-lg p-2 text-sm text-white focus:outline-none focus:border-indigo-500"
             >
               <option value="Low">Low Risk</option>
@@ -115,6 +123,12 @@ export const CommunitySafety: React.FC = () => {
                   </span>
                 </div>
               </div>
+              <button
+                onClick={() => handleEditZone(zone.id)}
+                className="text-slate-500 hover:text-red-400 text-xs p-1"
+              >
+                Edit
+              </button>
               <button
                 onClick={() => handleDeleteZone(zone.id)}
                 className="text-slate-500 hover:text-red-400 text-xs p-1"
