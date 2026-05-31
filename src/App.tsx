@@ -59,6 +59,7 @@ export default function App(): React.JSX.Element {
     27.7172, 85.324,
   ]);
   //  SHELTERS
+
   const shelters = [
     {
       id: 1,
@@ -66,48 +67,29 @@ export default function App(): React.JSX.Element {
       capacity: "120/200",
       status: "Active",
       amenities: "Food, Medical, Power",
+      lat: 27.7342, //  Added Latitude for Kapan
+      lng: 85.3624, // Added Longitude for Kapan
     },
-
     {
       id: 2,
       name: "Balkhu Relief Center",
       capacity: "85/100",
       status: "Full",
       amenities: "Water, Medical",
+      lat: 27.6841, //  Added Latitude for Balkhu
+      lng: 85.3022, //  Added Longitude for Balkhu
     },
-
     {
       id: 3,
       name: "Sankhamul Shelter Home",
       capacity: "10/150",
       status: "Active",
       amenities: "Food, Blankets",
+      lat: 27.6897,
+      lng: 85.3341,
     },
   ];
-  //  TEAMS
-  const teams = [
-    {
-      id: 1,
-      name: "Disaster Response Unit Alpha",
-      members: 12,
-      status: "Deployed",
-      contact: "98510XXXXX",
-    },
-    {
-      id: 2,
-      name: "Nepal Red Cross Squad-2",
-      members: 8,
-      status: "Standby",
-      contact: "98412XXXXX",
-    },
-    {
-      id: 3,
-      name: "APF Rescue Group Delta",
-      members: 20,
-      status: "On Route",
-      contact: "98011XXXXX",
-    },
-  ];
+
   // MANUAL ALERT
   const [manualType, setManualType] = useState("FLOOD");
   const [manualLat, setManualLat] = useState("27.7172");
@@ -548,15 +530,14 @@ export default function App(): React.JSX.Element {
         )}
         {/* RESOURCES */}
         {currentTab === "resources" && (
-          <ResourcesTab shelters={shelters} teams={teams} />
+          <ResourcesTab initialShelters={shelters} />
         )}
-
+        {/*}
         {/* ANALYTICS */}
         {currentTab === "analytics" && (
           <AnalyticsTab criticalAlerts={criticalAlerts} />
         )}
 
-        {/* MANUAL */}
         {/* MANUAL */}
         {currentTab === "manual" && (
           <ManualTab

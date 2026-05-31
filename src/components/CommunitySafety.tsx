@@ -101,8 +101,6 @@ export const CommunitySafety: React.FC = () => {
             + Add Zone
           </button>
         </form>
-
-        {/* सूची */}
         <div className="space-y-3 max-h-[250px] overflow-y-auto pr-1">
           {safetyZones.map((zone) => (
             <div

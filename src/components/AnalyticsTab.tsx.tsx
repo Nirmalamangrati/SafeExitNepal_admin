@@ -1,4 +1,3 @@
-// src/components/AnalyticsTab.tsx
 import React from "react";
 
 interface Alert {
