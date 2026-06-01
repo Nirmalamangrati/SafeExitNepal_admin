@@ -4,9 +4,9 @@ import { ShieldAlert, ExternalLink } from "lucide-react";
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-import { AnalyticsTab } from "./components/AnalyticsTab.tsx";
 import { ResourcesTab } from "./components/ResourcesTab";
-import { ManualTab } from "./components/Manual.tsx";
+import { AnalyticsTab } from "./components/AnalyticsTab";
+import { ManualTab } from "./components/ManualTab";
 const customMarkerIcon = new L.Icon({
   iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
   shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
@@ -58,6 +58,12 @@ export default function App(): React.JSX.Element {
   const [mapCenter, setMapCenter] = useState<[number, number]>([
     27.7172, 85.324,
   ]);
+  const [manualType, setManualType] = useState<string>("FLOOD");
+  const [manualCategory, setManualCategory] = useState<string>("HIGH");
+  const [locationName, setLocationName] = useState<string>("");
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [manualLat, setManualLat] = useState<string>("27.7172");
+  const [manualLng, setManualLng] = useState<string>("85.3240");
   //  SHELTERS
 
   const shelters = [
@@ -89,11 +95,6 @@ export default function App(): React.JSX.Element {
       lng: 85.3341,
     },
   ];
-
-  // MANUAL ALERT
-  const [manualType, setManualType] = useState("FLOOD");
-  const [manualLat, setManualLat] = useState("27.7172");
-  const [manualLng, setManualLng] = useState("85.3240");
   //  SOUND
   const triggerAlertSound = () => {
     if (audioRef.current) {
@@ -145,11 +146,16 @@ export default function App(): React.JSX.Element {
     socket.on("admin-new-incident", (newIncident: BackendIncidentPayload) => {
       const mappedIncident: SOSAlertPayload = {
         eventId: newIncident._id || Math.random().toString(36).substr(2, 9),
-        victim: newIncident.reporterInfo?.yourName || "Unknown User",
+        victim:
+          typeof newIncident.reporterInfo === "string"
+            ? JSON.parse(newIncident.reporterInfo)?.yourName
+            : newIncident.reporterInfo?.yourName || "Command Center",
+
         location: {
           lat: Number(newIncident.latitude) || 27.7172,
           lng: Number(newIncident.longitude) || 85.324,
         },
+        locationName: newIncident.locationName || "Command Center Override",
         status: (newIncident.status as SOSAlertPayload["status"]) || "PENDING",
         incidentCategory:
           newIncident.incidentType || newIncident.incidentCategory || "GENERAL",
@@ -158,10 +164,12 @@ export default function App(): React.JSX.Element {
       setMapCenter([mappedIncident.location.lat, mappedIncident.location.lng]);
       triggerAlertSound();
     });
+
     return () => {
       socket.disconnect();
     };
   }, []);
+
   // UPDATE STATUS
   const updateIncidentStatus = async (
     eventId: string,
@@ -196,93 +204,6 @@ export default function App(): React.JSX.Element {
       console.error(err);
     }
   };
-  // MANUAL ALERT SUBMIT
-  const handleManualAlertSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    const fakeIncident = {
-      incidentCategory: "critical",
-      incidentType: manualType.toLowerCase(),
-      incidentDate: new Date().toISOString(),
-      locationName: "Command Center Override",
-      latitude: parseFloat(manualLat),
-      longitude: parseFloat(manualLng),
-      description: `Manual override alert for ${manualType} injected from Command Center.`,
-      status: "PENDING",
-      attachedFilePath: "",
-
-      suspectInfo: JSON.stringify({
-        name: "",
-        age: "",
-        gender: "",
-        contact: "",
-      }),
-      reporterInfo: JSON.stringify({
-        name: "Command Center",
-        yourName: "Command Center",
-        contact: "System Override",
-        isAnonymous: false,
-      }),
-    };
-
-    try {
-      const response = await fetch("http://192.168.43.132:8000/api/incidents", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(fakeIncident),
-      });
-
-      const responseText = await response.text();
-      let resData;
-
-      try {
-        resData = JSON.parse(responseText);
-      } catch (e) {
-        resData = { error: responseText };
-      }
-
-      if (response.ok) {
-        const backendObject = resData.data || resData.incident || resData;
-
-        // CRITICAL FIX: Structure the object to include fields your frontend layout relies on
-        const dataToSave = {
-          ...backendObject, // Appends database fields like _id, createdAt, etc.
-          incidentCategory:
-            backendObject.incidentCategory || fakeIncident.incidentCategory,
-          incidentType: backendObject.incidentType || fakeIncident.incidentType,
-          incidentDate: backendObject.incidentDate || fakeIncident.incidentDate,
-          locationName: backendObject.locationName || fakeIncident.locationName,
-          description: backendObject.description || fakeIncident.description,
-          status: backendObject.status || fakeIncident.status,
-
-          // Mocking fields that your client cards or maps might be searching for
-          eventId: backendObject._id || "MANUAL-OVERRIDE",
-          victim: "Command Center Override",
-
-          // This stops your map/card components from reading 'undefined' properties
-          location: {
-            lat: parseFloat(manualLat),
-            lng: parseFloat(manualLng),
-          },
-        };
-
-        // Safely update state without crashing rendering routines
-        setCriticalAlerts((prev) => [dataToSave, ...prev]);
-        setMapCenter([parseFloat(manualLat), parseFloat(manualLng)]);
-        setCurrentTab("incidents");
-
-        setManualLat("");
-        setManualLng("");
-      } else {
-        console.log("BACKEND FAILED RAW OUTPUT:", responseText);
-        alert(`Save failed: ${resData.error || "Check backend console"}`);
-      }
-    } catch (error) {
-      console.error("Broadcast network error:", error);
-      alert("Could not establish a connection with the backend server.");
-    }
-  };
-
   // DELETE INCIDENT
   const handleDelete = async (eventId: string) => {
     if (!window.confirm("Are you sure you want to delete this incident?")) {
@@ -304,6 +225,58 @@ export default function App(): React.JSX.Element {
       console.error(err);
     }
   };
+  // MANUAL ALERT SUBMIT
+  const handleManualAlertSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const latVal = parseFloat(manualLat) || 27.7172;
+    const lngVal = parseFloat(manualLng) || 85.324;
+
+    const fakeIncident = {
+      incidentCategory: manualCategory.toLowerCase(),
+      incidentType: manualType.toLowerCase(),
+      incidentDate: new Date().toISOString(),
+      locationName: locationName || "Command Center Override",
+      latitude: latVal,
+      longitude: lngVal,
+      description: `Manual override alert for ${manualType} injected from Command Center.`,
+      status: "PENDING",
+      attachedFilePath: "",
+      suspectInfo: JSON.stringify({
+        name: "",
+        age: "",
+        gender: "",
+        contact: "",
+      }),
+      reporterInfo: JSON.stringify({
+        name: "Command Center",
+        yourName: "Command Center",
+        contact: "System Override",
+        isAnonymous: false,
+      }),
+    };
+
+    try {
+      const response = await fetch(`${SOCKET_SERVER_URL}/api/incidents`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(fakeIncident),
+      });
+
+      if (response.ok) {
+        alert("Alert broadcasted successfully!");
+        setLocationName("");
+      } else {
+        alert("Failed to create manual alert. Please try again.");
+      }
+    } catch (err) {
+      console.error("API Connection Error:", err);
+      alert("Network error. Cannot connect to server.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <div
       onClick={() => {
@@ -532,22 +505,29 @@ export default function App(): React.JSX.Element {
         {currentTab === "resources" && (
           <ResourcesTab initialShelters={shelters} />
         )}
-        {/*}
         {/* ANALYTICS */}
         {currentTab === "analytics" && (
-          <AnalyticsTab criticalAlerts={criticalAlerts} />
+          <div className="bg-[#111c40] border border-slate-800 rounded-xl p-6">
+            <h2 className="text-lg font-bold mb-4">Analytics Dashboard</h2>
+            <AnalyticsTab criticalAlerts={criticalAlerts} />
+          </div>
         )}
-
-        {/* MANUAL */}
+        {/* MANUAL ALERT */}
         {currentTab === "manual" && (
           <ManualTab
             manualType={manualType}
             setManualType={setManualType}
+            manualCategory={manualCategory}
+            setManualCategory={setManualCategory}
+            locationName={locationName}
+            setLocationName={setLocationName}
+            handleManualAlertSubmit={handleManualAlertSubmit}
+            isSubmitting={isSubmitting}
+            setIsSubmitting={setIsSubmitting}
             manualLat={manualLat}
             setManualLat={setManualLat}
             manualLng={manualLng}
             setManualLng={setManualLng}
-            handleManualAlertSubmit={handleManualAlertSubmit}
           />
         )}
       </main>

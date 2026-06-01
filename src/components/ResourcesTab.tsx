@@ -47,7 +47,7 @@ interface ResourcesTabProps {
 
 // Global initialization of live communication web sockets link
 // Connected to your backend system port 8000
-const socket = io("http://localhost:8000");
+const socket = io("http://192.168.43.132:8000");
 
 export const ResourcesTab: React.FC<ResourcesTabProps> = ({
   initialShelters,
@@ -131,7 +131,7 @@ export const ResourcesTab: React.FC<ResourcesTabProps> = ({
                 {/* Visual Proximity Marker Badge: Displays calculation distance layout logs */}
                 {s.distanceFromUser !== undefined && (
                   <span className="text-xs text-slate-400 bg-slate-800 px-2 py-0.5 rounded">
-                    📍 {s.distanceFromUser} km away
+                    {s.distanceFromUser} km away
                   </span>
                 )}
               </div>
