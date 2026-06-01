@@ -33,7 +33,6 @@ const defaultTeams: RescueTeam[] = [
   },
 ];
 
-// 🚨 FIX: Default assignment context (teams = defaultTeams)
 // If the incoming props array is empty, it will automatically load our mock items
 export default function Rescueteam({ teams }: { teams: RescueTeam[] }) {
   // If teams prop from parent has items, use it. Otherwise, use defaultTeams list.
