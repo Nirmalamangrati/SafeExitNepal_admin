@@ -1,12 +1,17 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 interface RescueTeam {
-  id: string | number;
+  id?: string | number;
+  _id?: string;
   name: string;
   contact: string;
   members: number | string;
+  email: string;
+  website: string;
   status: string;
+  location: string;
 }
+
 export default function Rescueteam({
   teams: initialTeams,
 }: {
@@ -29,69 +34,158 @@ export default function Rescueteam({
   const [name, setName] = useState("");
   const [contact, setContact] = useState("");
   const [members, setMembers] = useState("");
+  const [teamEmail, setTeamEmail] = useState("");
+  const [teamWebsite, setTeamWebsite] = useState("");
+  const [teamLocation, setTeamLocation] = useState("");
   const [status, setStatus] = useState("Available");
+  const baseUrl = "http://192.168.43.132:8000/api/teams";
+  // INITIAL DATA FETCH
+  useEffect(() => {
+    const fetchTeams = async () => {
+      try {
+        const response = await fetch(baseUrl);
+        if (!response.ok) throw new Error("Failed to fetch teams");
+        const data = await response.json();
+        setTeams(data);
+      } catch (error) {
+        console.error("Error loading teams from database:", error);
+      }
+    };
+    fetchTeams();
+  }, []);
+
   const openAddModal = () => {
     setEditingTeamId(null);
     setName("");
     setContact("");
     setMembers("");
+    setTeamEmail("");
+    setTeamWebsite("");
+    setTeamLocation("");
     setStatus("Available");
     setIsModalOpen(true);
   };
+
   const openEditModal = (team: RescueTeam) => {
-    setEditingTeamId(team.id);
+    // MongoDB को आईडी प्राथमिकता दिने
+    const currentId = team._id || team.id || null;
+    setEditingTeamId(currentId);
     setName(team.name);
     setContact(team.contact);
     setMembers(String(team.members));
     setStatus(team.status);
+    setTeamEmail(team.email);
+    setTeamWebsite(team.website);
+    setTeamLocation(team.location);
     setIsModalOpen(true);
     setActiveMenuId(null);
   };
-  const handleFormSubmit = (e: React.FormEvent) => {
+  //  FORM SUBMIT FUNCTION (ADD / EDIT)
+  const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name || !contact || !members) return;
+    if (!name || !contact || !members || !teamLocation) {
+      alert("Please fill in all required fields.");
+      return;
+    }
+    const teamPayload = {
+      name,
+      contact,
+      members: Number(members),
+      email: teamEmail || "",
+      website: teamWebsite || "",
+      status,
+      location: teamLocation,
+    };
+    try {
+      if (editingTeamId !== null) {
+        // EDIT MODE (PUT REQUEST)
+        const response = await fetch(`${baseUrl}/${editingTeamId}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(teamPayload),
+        });
 
-    if (editingTeamId !== null) {
-      // edit mode
-      setTeams(
-        teams.map((t) =>
-          t.id === editingTeamId
-            ? { ...t, name, contact, members: Number(members), status }
-            : t,
+        if (!response.ok) throw new Error("Failed to update team");
+        const data = await response.json();
+
+        setTeams((prev) =>
+          prev.map((t) =>
+            t.id === editingTeamId || t._id === editingTeamId ? data : t,
+          ),
+        );
+      } else {
+        // ADD MODE (POST REQUEST)
+        const response = await fetch(baseUrl, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(teamPayload),
+        });
+
+        if (!response.ok) throw new Error("Failed to add team");
+        const savedTeam = await response.json();
+        setTeams((prev) => [savedTeam, ...prev]);
+      }
+      // reset form and close modal
+      setName("");
+      setContact("");
+      setMembers("");
+      setTeamEmail("");
+      setTeamWebsite("");
+      setTeamLocation("");
+      setIsModalOpen(false);
+      setEditingTeamId(null);
+    } catch (error) {
+      console.error("Error saving team:", error);
+      alert("Data can not be saved. Please try again.");
+    }
+  };
+  //  REMOVE TEAM FUNCTION (DELETE)
+  const handleDeleteTeam = async (id: string | number) => {
+    if (!window.confirm("Are you sure you want to delete this team?")) return;
+
+    try {
+      const response = await fetch(`${baseUrl}/${id}`, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+      });
+      if (!response.ok) {
+        throw new Error("Failed to delete the team from the server.");
+      }
+      setTeams((prevTeams) =>
+        prevTeams.filter((t) => t.id !== id && t._id !== id),
+      );
+      setActiveMenuId(null);
+    } catch (error) {
+      console.error("Error deleting team:", error);
+      alert("Could not delete team. Please try again.");
+    }
+  };
+  //  STATUS CHANGE FUNCTION (PATCH)
+  const handleStatusChange = async (id: string | number, newStatus: string) => {
+    try {
+      const response = await fetch(`${baseUrl}/${id}/status`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: newStatus }),
+      });
+      if (!response.ok) {
+        throw new Error("Failed to update team status on the server.");
+      }
+      setTeams((prevTeams) =>
+        prevTeams.map((t) =>
+          t.id === id || t._id === id ? { ...t, status: newStatus } : t,
         ),
       );
-    } else {
-      // add mode
-      const newTeam: RescueTeam = {
-        id: Date.now(),
-        name,
-        contact,
-        members: Number(members),
-        status,
-      };
-      setTeams([newTeam, ...teams]);
-    }
-    // reset form and close modal
-    setName("");
-    setContact("");
-    setMembers("");
-    setIsModalOpen(false);
-    setEditingTeamId(null);
-  };
-  // remove team from list
-  const handleDeleteTeam = (id: string | number) => {
-    if (window.confirm("Are you sure you want to delete this team?")) {
-      setTeams(teams.filter((t) => t.id !== id));
       setActiveMenuId(null);
+    } catch (error) {
+      console.error("Error updating team status:", error);
+      alert("Could not update status. Please try again.");
     }
   };
-  // update team status directly from dropdown
-  const handleStatusChange = (id: string | number, newStatus: string) => {
-    setTeams(teams.map((t) => (t.id === id ? { ...t, status: newStatus } : t)));
-    setActiveMenuId(null);
-  };
+
+  // Performance optimized search filtering
   const filteredTeams = teams.filter((t) =>
-    t.name.toLowerCase().includes(search.toLowerCase()),
+    t.name.toLowerCase().includes(search.trim().toLowerCase()),
   );
   const getStatusStyle = (status: string) => {
     switch (status) {
@@ -104,7 +198,7 @@ export default function Rescueteam({
     }
   };
   return (
-    <div className="bg-[#111c40] rounded-2xl p-6 border border-slate-800 shadow-2xl max-w-4xl mx-auto text-slate-100 font-sans antialiased relative">
+    <div className="bg-[#111c40] rounded-2xl p-6 border border-slate-800 shadow-2xl max-w-4xl mx-auto text-slate-100 font-sans antialiased relative max-h-[85vh] overflow-y-auto">
       {/* Dashboard Top Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8 pb-5 border-b border-slate-800">
         <div>
@@ -160,15 +254,53 @@ export default function Rescueteam({
                   <h3 className="font-bold text-white text-base group-hover:text-cyan-400 transition-colors">
                     {t.name}
                   </h3>
-                  <div className="flex flex-col sm:flex-row sm:items-center gap-x-6 gap-y-1 text-xs text-slate-400">
-                    <span className="flex items-center gap-1.5">
-                      <span className="text-slate-500">📞</span> {t.contact}
-                    </span>
-                    <span className="flex items-center gap-1.5">
-                      <span className="text-slate-500">👥</span> Crew:{" "}
-                      <strong className="text-slate-200">{t.members}</strong>
-                    </span>
+                  <div className="flex flex-col gap-3 text-xs text-slate-400 mt-2">
+                    {/* 📄 पहिलो पङ्क्ति: जानकारीहरूलाई २ भागमा विभाजन गरिएको छ */}
+                    <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+                      {/* 📞 बायाँ भाग: फोन नम्बर र त्यसको ठ्याक्कै मुनि ठेगाना (ठाडो रूपमा फिक्स) */}
+                      <div className="flex flex-col gap-1.5 min-w-[200px]">
+                        <span className="flex items-center gap-1.5">
+                          <span className="text-slate-500">📞</span> {t.contact}
+                        </span>
+                        {t.email && (
+                          <span className="flex items-center gap-1.5">
+                            <span className="text-slate-500">✉️</span> {t.email}
+                          </span>
+                        )}
+                        {t.website && (
+                          <a
+                            href={
+                              t.website.startsWith("http")
+                                ? t.website
+                                : `https://${t.website}`
+                            }
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-1.5 text-blue-400 hover:underline hover:text-blue-300 transition-colors"
+                          >
+                            <span className="text-slate-500">🌐</span> Website
+                          </a>
+                        )}
+                      </div>
+                      <div className="flex flex-col gap-1.5 sm:items-end">
+                        <span className="flex items-center gap-1.5">
+                          <span className="text-slate-500 font-medium">
+                            Address:
+                          </span>{" "}
+                          <strong className="text-cyan-400/90">
+                            {t.location}
+                          </strong>
+                        </span>
+                        <span className="flex items-center gap-1.5">
+                          <span className="text-slate-500">👥</span> Crew:{" "}
+                          <strong className="text-slate-200">
+                            {t.members}
+                          </strong>
+                        </span>
+                      </div>
+                    </div>
                   </div>
+
                   <div className="pt-1">
                     <span
                       className={`inline-flex items-center px-2.5 py-1 text-xs font-semibold rounded-lg tracking-wide shadow-sm ${getStatusStyle(t.status)}`}
@@ -180,60 +312,75 @@ export default function Rescueteam({
 
                 {/* Actions Context Button (3-Dot) */}
                 <div className="relative">
-                  <button
-                    onClick={() =>
-                      setActiveMenuId(activeMenuId === t.id ? null : t.id)
-                    }
-                    className="text-slate-500 hover:text-white p-1.5 rounded-xl hover:bg-slate-800 transition-all text-lg font-bold"
-                  >
-                    ⋮
-                  </button>
-                  {activeMenuId === t.id && (
-                    <div className="absolute right-0 mt-2 w-44 bg-[#0f172a] border border-slate-700/80 rounded-xl shadow-2xl z-30 overflow-hidden text-xs divide-y divide-slate-800/60">
-                      {/* Quick Status Modifiers */}
-                      <div className="py-1">
-                        <button
-                          onClick={() => handleStatusChange(t.id, "Available")}
-                          className="w-full text-left px-4 py-2 text-emerald-400 hover:bg-emerald-500/5 transition-colors font-medium flex items-center gap-2"
-                        >
-                          <span className="h-1.5 w-1.5 rounded-full bg-emerald-400"></span>{" "}
-                          Set Available
-                        </button>
+                  {(() => {
+                    const teamId = t._id || t.id || "";
+
+                    return (
+                      <>
                         <button
                           onClick={() =>
-                            handleStatusChange(t.id, "Unavailable")
+                            setActiveMenuId(
+                              activeMenuId === teamId ? null : teamId,
+                            )
                           }
-                          className="w-full text-left px-4 py-2 text-rose-400 hover:bg-rose-500/5 transition-colors font-medium flex items-center gap-2"
+                          className="text-slate-500 hover:text-white p-1.5 rounded-xl hover:bg-slate-800 transition-all text-lg font-bold"
                         >
-                          <span className="h-1.5 w-1.5 rounded-full bg-rose-400"></span>{" "}
-                          Set Unavailable
+                          ⋮
                         </button>
-                        <button
-                          onClick={() => handleStatusChange(t.id, "On the Way")}
-                          className="w-full text-left px-4 py-2 text-amber-400 hover:bg-amber-500/5 transition-colors font-medium flex items-center gap-2"
-                        >
-                          <span className="h-1.5 w-1.5 rounded-full bg-amber-400"></span>{" "}
-                          Set On the Way
-                        </button>
-                      </div>
 
-                      {/* Hard Structural Modifiers (Edit & Delete) */}
-                      <div className="py-1 bg-slate-900/40">
-                        <button
-                          onClick={() => openEditModal(t)}
-                          className="w-full text-left px-4 py-2 text-slate-300 hover:bg-slate-800 hover:text-cyan-400 transition-colors flex items-center gap-2"
-                        >
-                          ✏️
-                        </button>
-                        <button
-                          onClick={() => handleDeleteTeam(t.id)}
-                          className="w-full text-left px-4 py-2 text-rose-500 hover:bg-rose-950/20 transition-colors flex items-center gap-2 font-medium"
-                        >
-                          ❌
-                        </button>
-                      </div>
-                    </div>
-                  )}
+                        {activeMenuId === teamId && (
+                          <div className="absolute right-0 mt-2 w-44 bg-[#0f172a] border border-slate-700/80 rounded-xl shadow-2xl z-30 overflow-hidden text-xs divide-y divide-slate-800/60">
+                            {/* Quick Status Modifiers */}
+                            <div className="py-1">
+                              <button
+                                onClick={() =>
+                                  handleStatusChange(teamId, "Available")
+                                }
+                                className="w-full text-left px-4 py-2 text-emerald-400 hover:bg-emerald-500/5 transition-colors font-medium flex items-center gap-2"
+                              >
+                                <span className="h-1.5 w-1.5 rounded-full bg-emerald-400"></span>{" "}
+                                Set Available
+                              </button>
+                              <button
+                                onClick={() =>
+                                  handleStatusChange(teamId, "Unavailable")
+                                }
+                                className="w-full text-left px-4 py-2 text-rose-400 hover:bg-rose-500/5 transition-colors font-medium flex items-center gap-2"
+                              >
+                                <span className="h-1.5 w-1.5 rounded-full bg-rose-400"></span>{" "}
+                                Set Unavailable
+                              </button>
+                              <button
+                                onClick={() =>
+                                  handleStatusChange(teamId, "On the Way")
+                                }
+                                className="w-full text-left px-4 py-2 text-amber-400 hover:bg-amber-500/5 transition-colors font-medium flex items-center gap-2"
+                              >
+                                <span className="h-1.5 w-1.5 rounded-full bg-amber-400"></span>{" "}
+                                Set On the Way
+                              </button>
+                            </div>
+
+                            {/* Hard Structural Modifiers (Edit & Delete) */}
+                            <div className="py-1 bg-slate-900/40">
+                              <button
+                                onClick={() => openEditModal(t)}
+                                className="w-full text-left px-4 py-2 text-slate-300 hover:bg-slate-800 hover:text-cyan-400 transition-colors flex items-center gap-2 font-medium"
+                              >
+                                ✏️ Edit Team
+                              </button>
+                              <button
+                                onClick={() => handleDeleteTeam(teamId)}
+                                className="w-full text-left px-4 py-2 text-rose-500 hover:bg-rose-950/20 transition-colors flex items-center gap-2 font-medium"
+                              >
+                                ❌ Delete Team
+                              </button>
+                            </div>
+                          </div>
+                        )}
+                      </>
+                    );
+                  })()}
                 </div>
               </div>
             ))
@@ -246,6 +393,7 @@ export default function Rescueteam({
           )}
         </div>
       </div>
+
       {/* Modal */}
       {isModalOpen && (
         <div
@@ -271,7 +419,10 @@ export default function Rescueteam({
               </button>
             </div>
 
-            <form onSubmit={handleFormSubmit} className="space-y-4">
+            <form
+              onSubmit={handleFormSubmit}
+              className="space-y-2 max-h-[420px] overflow-y-auto pr-2"
+            >
               <div>
                 <label className="block text-sm text-slate-300 mb-2">
                   Team Name
@@ -285,7 +436,18 @@ export default function Rescueteam({
                   required
                 />
               </div>
-
+              <div>
+                <label className="block text-sm text-slate-300 mb-2">
+                  Team Location
+                </label>
+                <input
+                  type="text"
+                  placeholder="e.g. Kathmandu, Nepal"
+                  value={teamLocation}
+                  onChange={(e) => setTeamLocation(e.target.value)}
+                  className="w-full bg-[#0f172a] border border-slate-700 rounded-xl p-3 text-white"
+                />
+              </div>
               <div>
                 <label className="block text-sm text-slate-300 mb-2">
                   Contact Number
@@ -320,12 +482,13 @@ export default function Rescueteam({
                 <input
                   type="email"
                   placeholder="Enter email address"
-                  value={contact}
-                  onChange={(e) => setContact(e.target.value)}
+                  value={teamEmail}
+                  onChange={(e) => setTeamEmail(e.target.value)}
                   className="w-full bg-[#0f172a] border border-slate-700 rounded-xl p-3 text-white"
                   required
                 />
               </div>
+
               <div>
                 <label className="block text-sm text-slate-300 mb-2">
                   Website{" "}
@@ -333,8 +496,8 @@ export default function Rescueteam({
                 <input
                   type="url"
                   placeholder="Enter website URL"
-                  value={contact}
-                  onChange={(e) => setContact(e.target.value)}
+                  value={teamWebsite}
+                  onChange={(e) => setTeamWebsite(e.target.value)}
                   className="w-full bg-[#0f172a] border border-slate-700 rounded-xl p-3 text-white"
                 />
               </div>
