@@ -198,7 +198,7 @@ export default function Rescueteam({
     }
   };
   return (
-    <div className="bg-[#111c40] rounded-2xl p-6 border border-slate-800 shadow-2xl max-w-4xl mx-auto text-slate-100 font-sans antialiased relative max-h-[85vh] overflow-y-auto">
+    <div className="bg-[#111c40] rounded-2xl p-6 border border-slate-800 shadow-2xl max-w-4xl mx-auto text-slate-100 font-sans antialiased relative max-h-[105vh] overflow-y-auto">
       {/* Dashboard Top Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8 pb-5 border-b border-slate-800">
         <div>
@@ -255,9 +255,7 @@ export default function Rescueteam({
                     {t.name}
                   </h3>
                   <div className="flex flex-col gap-3 text-xs text-slate-400 mt-2">
-                    {/* 📄 पहिलो पङ्क्ति: जानकारीहरूलाई २ भागमा विभाजन गरिएको छ */}
                     <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
-                      {/* 📞 बायाँ भाग: फोन नम्बर र त्यसको ठ्याक्कै मुनि ठेगाना (ठाडो रूपमा फिक्स) */}
                       <div className="flex flex-col gap-1.5 min-w-[200px]">
                         <span className="flex items-center gap-1.5">
                           <span className="text-slate-500">📞</span> {t.contact}
