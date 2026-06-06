@@ -223,7 +223,7 @@ export default function Rescueteam({
             onClick={openAddModal}
             className="bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-bold px-4 py-2 rounded-xl text-sm transition-all transform active:scale-[0.98] shadow-lg shadow-cyan-500/20 flex items-center gap-1.5 h-10"
           >
-            <span>+</span> Add Team
+            <span>+</span> Register Team
           </button>
         </div>
       </div>
