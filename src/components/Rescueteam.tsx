@@ -67,7 +67,6 @@ export default function Rescueteam({
   };
 
   const openEditModal = (team: RescueTeam) => {
-    // MongoDB को आईडी प्राथमिकता दिने
     const currentId = team._id || team.id || null;
     setEditingTeamId(currentId);
     setName(team.name);

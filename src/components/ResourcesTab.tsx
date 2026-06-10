@@ -42,7 +42,6 @@ interface ResourcesTabProps {
 const socket = io("http://192.168.43.132:8000");
 
 export const ResourcesTab: React.FC<ResourcesTabProps> = () => {
-  // 🌟 FIX: Starting state is now an empty array instead of initialShelters
   const [shelters, setShelters] = useState<Shelter[]>([]);
   const [userLocation, setUserLocation] = useState<{
     lat: number;
@@ -58,11 +57,15 @@ export const ResourcesTab: React.FC<ResourcesTabProps> = () => {
   // Form Inputs
   const [name, setName] = useState<string>("");
   const [amenities, setAmenities] = useState<string>("");
+  const [fulladdress, setFulladdress] = useState("");
   const [capacity, setCapacity] = useState<string>("");
   const [status, setStatus] = useState<string>("Open");
   const [lat, setLat] = useState<string>("");
   const [lng, setLng] = useState<string>("");
   const [showRegisterModal, setShowRegisterModal] = useState<boolean>(false);
+  const [supervisorName, setSupervisorName] = useState("");
+  const [contactPhone, setContactPhone] = useState("");
+  const [alternativePhone, setAlternativePhone] = useState("");
 
   // 1. Get Live User Location
   useEffect(() => {
@@ -80,11 +83,14 @@ export const ResourcesTab: React.FC<ResourcesTabProps> = () => {
         { enableHighAccuracy: true },
       );
     }
+
+    // FETCH TRIGGER: Ask backend for initial data immediately on page load
+    socket.emit("GET_ALL_SHELTERS");
   }, []);
 
-  // 2. Real-time Sync Event Hook
+  // 2. Real-time Sync Event Hook Fixed
   useEffect(() => {
-    socket.on("SHELTER_LIST_UPDATED", (backendShelters: Shelter[]) => {
+    const handleShelterUpdate = (backendShelters: Shelter[]) => {
       if (userLocation) {
         const sorted = backendShelters
           .map((s) => {
@@ -103,14 +109,17 @@ export const ResourcesTab: React.FC<ResourcesTabProps> = () => {
       } else {
         setShelters(backendShelters);
       }
-    });
+    };
+
+    // Main Listeners
+    socket.on("SHELTER_LIST_UPDATED", handleShelterUpdate);
 
     return () => {
-      socket.off("SHELTER_LIST_UPDATED");
+      socket.off("SHELTER_LIST_UPDATED", handleShelterUpdate);
     };
   }, [userLocation]);
 
-  // 3. Handle Form Submit (Add / Edit Action)
+  // 3. Handle Form Submit (Add / Edit Action Fixed Inline Flow)
   const handleSaveShelter = (e: React.FormEvent) => {
     e.preventDefault();
     if (!name || !lat || !lng)
@@ -169,8 +178,6 @@ export const ResourcesTab: React.FC<ResourcesTabProps> = () => {
     setLat("");
     setLng("");
   };
-  // 1. Remember to define this state variable at the top of your main component definition:
-  // const [showRegisterModal, setShowRegisterModal] = useState<boolean>(false);
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 relative">
@@ -268,14 +275,7 @@ export const ResourcesTab: React.FC<ResourcesTabProps> = () => {
             <h2 className="font-black mb-5 text-white text-lg">
               {isEditing ? "Edit Shelter Profile" : "Register Safe Shelter"}
             </h2>
-
-            <form
-              onSubmit={(e) => {
-                handleSaveShelter(e);
-                setShowRegisterModal(false); // Closes popup smoothly after submission
-              }}
-              className="space-y-4"
-            >
+            <form onSubmit={handleSaveShelter} className="space-y-4">
               <div>
                 <label className="block text-xs text-slate-400 mb-1">
                   Shelter Identification Name
@@ -288,7 +288,42 @@ export const ResourcesTab: React.FC<ResourcesTabProps> = () => {
                   placeholder="e.g. Central Community Center"
                 />
               </div>
-
+              <div>
+                <label className="block text-xs text-slate-400 mb-1">
+                  Shelter type
+                </label>
+                <select
+                  value={status}
+                  onChange={(e) => setStatus(e.target.value)}
+                  className="w-full bg-[#0b132b] border border-slate-800 rounded-lg p-2 text-white text-sm focus:border-blue-500 outline-none"
+                >
+                  <option value="Educational_Buildings">
+                    Educational Buildings{" "}
+                  </option>
+                  <option value="Tents"> Open Field / Tent Camp </option>
+                  <option value="Buildings">
+                    {" "}
+                    Government / Public Buildings{" "}
+                  </option>
+                  <option value="complex">Commercial / Large Complex </option>
+                  <option value="Pre-fabricated_Disaster_Shelters">
+                    Pre-fabricated Disaster Shelters{" "}
+                  </option>
+                  <option value="Religiouscomplex">Religious Complex </option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-xs text-slate-400 mb-1">
+                  Full address
+                </label>
+                <input
+                  type="text"
+                  value={fulladdress}
+                  onChange={(e) => setFulladdress(e.target.value)}
+                  className="w-full bg-[#0b132b] border border-slate-800 rounded-lg p-2 text-white text-sm focus:border-blue-500 outline-none"
+                  placeholder="Enter full address"
+                />
+              </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs text-slate-400 mb-1">
@@ -317,7 +352,7 @@ export const ResourcesTab: React.FC<ResourcesTabProps> = () => {
                   />
                 </div>
               </div>
-
+              {/* PLACE DIRECTLY BELOW PROVIDED AMENITIES FIELD */}
               <div>
                 <label className="block text-xs text-slate-400 mb-1">
                   Provided Amenities & Emergency Supplies
@@ -329,6 +364,50 @@ export const ResourcesTab: React.FC<ResourcesTabProps> = () => {
                   className="w-full bg-[#0b132b] border border-slate-800 rounded-lg p-2 text-white text-sm focus:border-blue-500 outline-none"
                   placeholder="e.g. Rations, Clean Water, Medical Aid Kits"
                 />
+              </div>
+
+              {/* NEW: DYNAMIC EMERGENCY CONTACT FIELDS INSERTION ZONE */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-1">
+                <div className="sm:col-span-1">
+                  <label className="block text-xs text-slate-400 mb-1">
+                    In-Charge Manager Name
+                  </label>
+                  <input
+                    type="text"
+                    value={supervisorName}
+                    onChange={(e) => setSupervisorName(e.target.value)}
+                    className="w-full bg-[#0b132b] border border-slate-800 rounded-lg p-2 text-white text-sm focus:border-blue-500 outline-none"
+                    placeholder="Ram Bahadur"
+                    required
+                  />
+                </div>
+
+                <div className="sm:col-span-1">
+                  <label className="block text-xs text-slate-400 mb-1">
+                    Primary Phone
+                  </label>
+                  <input
+                    type="tel"
+                    value={contactPhone}
+                    onChange={(e) => setContactPhone(e.target.value)}
+                    className="w-full bg-[#0b132b] border border-slate-800 rounded-lg p-2 text-white text-sm focus:border-blue-500 outline-none"
+                    placeholder="9841XXXXXX"
+                    required
+                  />
+                </div>
+
+                <div className="sm:col-span-1">
+                  <label className="block text-xs text-slate-400 mb-1">
+                    Backup Contact
+                  </label>
+                  <input
+                    type="tel"
+                    value={alternativePhone}
+                    onChange={(e) => setAlternativePhone(e.target.value)}
+                    className="w-full bg-[#0b132b] border border-slate-800 rounded-lg p-2 text-white text-sm focus:border-blue-500 outline-none"
+                    placeholder="01-XXXXXXX"
+                  />
+                </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
