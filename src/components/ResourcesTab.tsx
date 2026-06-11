@@ -23,37 +23,39 @@ function getHaversineDistance(
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   return EARTH_RADIUS_KM * c;
 }
-
 interface Shelter {
   id: string | number;
   name: string;
   amenities: string;
   capacity: string;
   status: string;
+  shelterType?: string;
   lat: number;
   lng: number;
+  fulladdress?: string;
+  supervisorName?: string;
+  contactPhone?: string;
+  alternativePhone?: string;
   distanceFromUser?: number;
 }
-
 interface ResourcesTabProps {
   initialShelters: Shelter[];
 }
-
 const socket = io("http://192.168.43.132:8000");
-
 export const ResourcesTab: React.FC<ResourcesTabProps> = () => {
   const [shelters, setShelters] = useState<Shelter[]>([]);
   const [userLocation, setUserLocation] = useState<{
     lat: number;
     lng: number;
   } | null>(null);
-
   // --- Admin Panel States ---
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [currentShelterId, setCurrentShelterId] = useState<
     string | number | null
   >(null);
-
+  const [activeDropdownId, setActiveDropdownId] = useState<
+    string | number | null
+  >(null);
   // Form Inputs
   const [name, setName] = useState<string>("");
   const [amenities, setAmenities] = useState<string>("");
@@ -66,33 +68,40 @@ export const ResourcesTab: React.FC<ResourcesTabProps> = () => {
   const [supervisorName, setSupervisorName] = useState("");
   const [contactPhone, setContactPhone] = useState("");
   const [alternativePhone, setAlternativePhone] = useState("");
-
+  const [shelterType, setShelterType] = useState<string>("Buildings");
   // 1. Get Live User Location
   useEffect(() => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
-          setUserLocation({
+          const loc = {
             lat: position.coords.latitude,
             lng: position.coords.longitude,
-          });
+          };
+          setUserLocation(loc);
+          socket.emit("GET_ALL_SHELTERS");
         },
         (error) => {
           console.error("Browser location permission denied:", error);
+          socket.emit("GET_ALL_SHELTERS");
         },
         { enableHighAccuracy: true },
       );
+    } else {
+      socket.emit("GET_ALL_SHELTERS");
     }
-
-    // FETCH TRIGGER: Ask backend for initial data immediately on page load
     socket.emit("GET_ALL_SHELTERS");
   }, []);
 
-  // 2. Real-time Sync Event Hook Fixed
+  // 2. Real-time Sync Event Hook
   useEffect(() => {
     const handleShelterUpdate = (backendShelters: Shelter[]) => {
+      const safeShelters = Array.isArray(backendShelters)
+        ? backendShelters
+        : [];
+
       if (userLocation) {
-        const sorted = backendShelters
+        const sorted = safeShelters
           .map((s) => {
             const dist = getHaversineDistance(
               userLocation.lat,
@@ -107,19 +116,25 @@ export const ResourcesTab: React.FC<ResourcesTabProps> = () => {
           );
         setShelters(sorted);
       } else {
-        setShelters(backendShelters);
+        setShelters(safeShelters);
       }
     };
 
-    // Main Listeners
     socket.on("SHELTER_LIST_UPDATED", handleShelterUpdate);
-
+    socket.on("connect", () => {
+      console.log("Connected to backend socket server!");
+    });
+    socket.on("connect_error", (error) => {
+      console.error("Socket Connection Error:", error);
+    });
     return () => {
       socket.off("SHELTER_LIST_UPDATED", handleShelterUpdate);
+      socket.off("connect");
+      socket.off("connect_error");
     };
   }, [userLocation]);
 
-  // 3. Handle Form Submit (Add / Edit Action Fixed Inline Flow)
+  // 3. Handle Form Submit
   const handleSaveShelter = (e: React.FormEvent) => {
     e.preventDefault();
     if (!name || !lat || !lng)
@@ -130,6 +145,11 @@ export const ResourcesTab: React.FC<ResourcesTabProps> = () => {
       amenities,
       capacity,
       status,
+      shelterType,
+      fulladdress,
+      supervisorName,
+      contactPhone,
+      alternativePhone,
       lat: parseFloat(lat),
       lng: parseFloat(lng),
     };
@@ -152,11 +172,15 @@ export const ResourcesTab: React.FC<ResourcesTabProps> = () => {
     setAmenities(shelter.amenities);
     setCapacity(shelter.capacity);
     setStatus(shelter.status);
+    setShelterType(shelter.shelterType || "Buildings");
+    setFulladdress(shelter.fulladdress || "");
+    setSupervisorName(shelter.supervisorName || "");
+    setContactPhone(shelter.contactPhone || "");
+    setAlternativePhone(shelter.alternativePhone || "");
     setLat(shelter.lat.toString());
     setLng(shelter.lng.toString());
     setShowRegisterModal(true);
   };
-
   // 5. Trigger Delete event loop pipeline
   const handleDeleteClick = (id: string | number) => {
     if (
@@ -168,6 +192,7 @@ export const ResourcesTab: React.FC<ResourcesTabProps> = () => {
     }
   };
 
+  // 6. clean all input boxes
   const clearForm = () => {
     setIsEditing(false);
     setCurrentShelterId(null);
@@ -175,6 +200,10 @@ export const ResourcesTab: React.FC<ResourcesTabProps> = () => {
     setAmenities("");
     setCapacity("");
     setStatus("Open");
+    setFulladdress("");
+    setSupervisorName("");
+    setContactPhone("");
+    setAlternativePhone("");
     setLat("");
     setLng("");
   };
@@ -217,50 +246,141 @@ export const ResourcesTab: React.FC<ResourcesTabProps> = () => {
                 className="bg-[#0b132b] p-4 rounded-xl border border-slate-800/50"
               >
                 <div className="flex justify-between items-center">
-                  <h3 className="font-bold text-white">{s.name}</h3>
+                  <h3 className="font-bold text-white text-base group-hover:text-cyan-400 transition-colors">
+                    {s.name}
+                  </h3>
+                  <div className="relative inline-block">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setActiveDropdownId(
+                          activeDropdownId === s.id ? null : s.id,
+                        );
+                      }}
+                      className="p-1 rounded-lg text-slate-400 hover:bg-slate-800 hover:text-white transition-colors focus:outline-none"
+                    >
+                      <svg
+                        xmlns="http://w3.org"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth={2.5}
+                        stroke="currentColor"
+                        className="w-4 h-4"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5"
+                        />
+                      </svg>
+                    </button>
+
+                    {activeDropdownId === s.id && (
+                      <>
+                        <div
+                          className="fixed inset-0 z-10"
+                          onClick={() => setActiveDropdownId(null)}
+                        />
+                        <div className="absolute right-0 mt-1 w-32 bg-[#0b132b] border border-slate-700 rounded-xl shadow-2xl z-30 py-1.5 overflow-hidden animate-fade-in">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleEditClick(s);
+                              setShowRegisterModal(true);
+                              setActiveDropdownId(null);
+                            }}
+                            className="w-full text-left px-4 py-2 text-xs text-cyan-400 hover:bg-slate-800 hover:text-white transition-colors font-semibold"
+                          >
+                            Edit
+                          </button>
+
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDeleteClick(s.id);
+                              setActiveDropdownId(null);
+                            }}
+                            className="w-full text-left px-4 py-2 text-xs text-red-400 hover:bg-red-600/20 hover:bg-red-600 hover:text-white transition-colors font-semibold border-t border-slate-800/60"
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      </>
+                    )}
+                  </div>
+
                   {s.distanceFromUser !== undefined && (
                     <span className="text-xs text-slate-400 bg-slate-800 px-2 py-0.5 rounded">
                       {s.distanceFromUser} km away
                     </span>
                   )}
                 </div>
+                <span className="text-xs font-semibold px-2 py-0.5 rounded bg-blue-950/60 text-blue-400 border border-blue-900/30">
+                  {(() => {
+                    const typeValue = s.shelterType || "Buildings";
+                    if (typeValue === "Buildings")
+                      return "Government / Public Buildings";
+                    if (typeValue === "Educational_Buildings")
+                      return "Educational Buildings";
+                    if (typeValue === "Tents") return "Open Field / Tent Camp";
+                    if (typeValue === "complex")
+                      return "Commercial / Large Complex";
+                    if (typeValue === "Pre-fabricated_Disaster_Shelters")
+                      return "Pre-fabricated Disaster Shelters";
+                    if (typeValue === "Religiouscomplex")
+                      return "Religious Complex";
+                    return typeValue;
+                  })()}
+                </span>
+                <p className="text-sm text-slate-400">
+                  <span className="text-slate-500 font-medium">Address:</span>{" "}
+                  {s.fulladdress || "N/A"}
+                </p>
 
                 <p className="text-sm text-slate-400 mt-1">
                   Amenities: {s.amenities}
                 </p>
                 <p className="text-sm text-slate-300">Capacity: {s.capacity}</p>
+                <div className="bg-[#111c40]/40 p-2.5 rounded-lg border border-slate-800/30 text-xs space-y-1 text-slate-400">
+                  <p>
+                    <span className="text-slate-500 font-medium">Manager:</span>{" "}
+                    {s.supervisorName || "N/A"}
+                  </p>
+                  <div className="flex gap-4">
+                    <p>
+                      <span className="text-slate-500 font-medium">
+                        Primary Phone:
+                      </span>{" "}
+                      {s.contactPhone || "N/A"}
+                    </p>
+                    {s.alternativePhone && (
+                      <p>
+                        <span className="text-slate-500 font-medium">
+                          Backup:
+                        </span>{" "}
+                        {s.alternativePhone}
+                      </p>
+                    )}
+                  </div>
+                </div>
 
                 <div className="flex justify-between items-center mt-3 pt-2 border-t border-slate-900">
                   <span
-                    className={`text-xs font-bold px-2 py-0.5 rounded ${
+                    className={`text-xs font-bold px-2 py-0.5 rounded border ${
                       s.status === "Full" ||
                       s.status === "Unsafe" ||
                       s.status === "Closed"
-                        ? "bg-red-950/50 text-red-400"
-                        : "bg-emerald-950/50 text-emerald-400"
+                        ? "bg-red-950/50 text-red-400 border-red-900/30"
+                        : "bg-emerald-950/50 text-emerald-400 border-emerald-900/30"
                     }`}
                   >
-                    {s.status}
+                    {s.status === "Open" ||
+                    s.status === "Full" ||
+                    s.status === "Closed" ||
+                    s.status === "Unsafe"
+                      ? s.status
+                      : "Open"}
                   </span>
-
-                  {/* Inline Controls */}
-                  <div className="flex space-x-2">
-                    <button
-                      onClick={() => {
-                        handleEditClick(s);
-                        setShowRegisterModal(true); // Open popup automatically for edit updates
-                      }}
-                      className="text-xs bg-blue-600/20 text-blue-400 border border-blue-500/30 px-2.5 py-1 rounded-md hover:bg-blue-600 hover:text-white transition"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => handleDeleteClick(s.id)}
-                      className="text-xs bg-red-600/20 text-red-400 border border-red-500/30 px-2.5 py-1 rounded-md hover:bg-red-600 hover:text-white transition"
-                    >
-                      Delete
-                    </button>
-                  </div>
                 </div>
               </div>
             ))

@@ -238,7 +238,7 @@ export default function Rescueteam({
             placeholder="Search rescue teams by name..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full bg-[#1e293b]/40 border border-slate-800 rounded-2xl pl-11 pr-4 py-3.5 text-sm focus:outline-none focus:ring-2 focus:ring-slate-700 transition-all text-white placeholder-slate-400"
+            className="w-full bg-[#0a1128] border border-slate-800 rounded-2xl pl-11 pr-4 py-3.5 text-sm focus:outline-none focus:ring-2 focus:ring-slate-700 transition-all text-white placeholder-slate-400"
           />
         </div>
         {/* Content Listing Element */}
@@ -247,7 +247,7 @@ export default function Rescueteam({
             filteredTeams.map((t) => (
               <div
                 key={t.id}
-                className="bg-[#1e293b]/30 hover:bg-[#1e293b]/50 p-5 rounded-2xl border border-slate-800/80 flex justify-between items-start relative transition-all duration-200 group hover:shadow-md"
+                className="bg-[#0b132b]  p-5 rounded-2xl border border-slate-800/80 flex justify-between items-start relative transition-all duration-200 group hover:shadow-md"
               >
                 <div className="space-y-2">
                   <h3 className="font-bold text-white text-base group-hover:text-cyan-400 transition-colors">
