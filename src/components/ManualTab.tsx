@@ -159,6 +159,8 @@ export const ManualTab: React.FC<ManualTabProps> = ({
   setManualLng,
 }) => {
   const [isReverseGeocoding, setIsReverseGeocoding] = useState(false);
+  const [latitude, setLatitude] = useState<string | number>("");
+  const [longitude, setLongitude] = useState<string | number>("");
   // Haversine Algorithm
   const calculateDistance = (
     lat1: number,
@@ -257,36 +259,38 @@ export const ManualTab: React.FC<ManualTabProps> = ({
           </label>
           <input
             type="text"
-            disabled
             placeholder={
               isReverseGeocoding
                 ? "Locating place..."
-                : "Click on the map to select location"
+                : "Type location name manually..."
             }
             value={locationName}
-            className="w-full bg-[#0b132b] border border-slate-700 rounded-xl p-2.5 mt-1 text-xs text-slate-300 focus:outline-none"
+            onChange={(e) => setLocationName(e.target.value)}
+            className="w-full bg-[#0b132b] border border-slate-700 rounded-xl p-2.5 mt-1 text-xs text-slate-300 focus:outline-none focus:ring-1 focus:ring-slate-500"
           />
         </div>
 
         <div className="grid grid-cols-2 gap-3">
-          <div>
-            <label className="text-xs font-bold text-slate-300">Latitude</label>
-            <input
-              type="text"
-              disabled
-              value={manualLat}
-              className="w-full bg-[#0b132b] border border-slate-700 rounded-xl p-2.5 mt-1 text-xs text-slate-400"
-            />
-          </div>
           <div>
             <label className="text-xs font-bold text-slate-300">
               Longitude
             </label>
             <input
               type="text"
-              disabled
-              value={manualLng}
-              className="w-full bg-[#0b132b] border border-slate-700 rounded-xl p-2.5 mt-1 text-xs text-slate-400"
+              placeholder="Enter longitude..."
+              value={longitude}
+              onChange={(e) => setLongitude(e.target.value)}
+              className="w-full bg-[#0b132b] border border-slate-700 rounded-xl p-2.5 mt-1 text-xs text-slate-300 focus:outline-none"
+            />
+          </div>
+          <div>
+            <label className="text-xs font-bold text-slate-300">Latitude</label>
+            <input
+              type="text"
+              placeholder="Enter latitude..."
+              value={latitude}
+              onChange={(e) => setLatitude(e.target.value)}
+              className="w-full bg-[#0b132b] border border-slate-700 rounded-xl p-2.5 mt-1 text-xs text-slate-300 focus:outline-none"
             />
           </div>
         </div>
