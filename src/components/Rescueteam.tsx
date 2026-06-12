@@ -199,9 +199,9 @@ export default function Rescueteam({
   return (
     <div className="bg-[#111c40] rounded-2xl p-6 border border-slate-800 shadow-2xl max-w-4xl mx-auto text-slate-100 font-sans antialiased relative max-h-[105vh] overflow-y-auto">
       {/* Dashboard Top Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8 pb-5 border-b border-slate-800">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-3 pb-5 border-b border-slate-800">
         <div>
-          <h2 className="text-2xl font-extrabold tracking-tight text-white flex items-center gap-2">
+          <h2 className="text-xl font-extrabold tracking-tight text-white flex items-center gap-2">
             Rescue Operation Teams
           </h2>
           <p className="text-xs text-slate-400 mt-1">
@@ -209,7 +209,7 @@ export default function Rescueteam({
           </p>
         </div>
         {/* Top Right Controls & Total Counter */}
-        <div className="flex items-center gap-3 self-end sm:self-center">
+        <div className="flex items-center gap-2 self-end sm:self-center">
           <div className="bg-slate-900/80 px-4 py-2 rounded-xl border border-slate-700/60 flex items-center gap-2 shadow-inner h-10">
             <span className="text-xs font-medium text-slate-400 uppercase tracking-wider">
               Total:
@@ -227,7 +227,7 @@ export default function Rescueteam({
         </div>
       </div>
       {/* Main Body Section */}
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-3">
         {/* Live Filter Search Input */}
         <div className="relative">
           <span className="absolute inset-y-0 left-4 flex items-center text-slate-500 pointer-events-none">
@@ -242,12 +242,12 @@ export default function Rescueteam({
           />
         </div>
         {/* Content Listing Element */}
-        <div className="space-y-3 max-h-[480px] overflow-y-auto pr-2 custom-scrollbar">
+        <div className="space-y-2 max-h-[480px] overflow-y-auto pr-2 custom-scrollbar ">
           {filteredTeams.length > 0 ? (
             filteredTeams.map((t) => (
               <div
                 key={t.id}
-                className="bg-[#0b132b]  p-5 rounded-2xl border border-slate-800/80 flex justify-between items-start relative transition-all duration-200 group hover:shadow-md"
+                className="w-full bg-[#0b132b]  p-5  rounded-2xl border border-slate-800/80 flex justify-between items-start relative transition-all duration-200 group hover:shadow-md"
               >
                 <div className="space-y-2">
                   <h3 className="font-bold text-white text-base group-hover:text-cyan-400 transition-colors">

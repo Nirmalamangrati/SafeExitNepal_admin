@@ -69,6 +69,8 @@ export const ResourcesTab: React.FC<ResourcesTabProps> = () => {
   const [contactPhone, setContactPhone] = useState("");
   const [alternativePhone, setAlternativePhone] = useState("");
   const [shelterType, setShelterType] = useState<string>("Buildings");
+  const [search, setSearch] = useState("");
+
   // 1. Get Live User Location
   useEffect(() => {
     if (navigator.geolocation) {
@@ -133,7 +135,9 @@ export const ResourcesTab: React.FC<ResourcesTabProps> = () => {
       socket.off("connect_error");
     };
   }, [userLocation]);
-
+  const filteredShelters = shelters.filter((shelter) =>
+    shelter.name.toLowerCase().includes(search.toLowerCase()),
+  );
   // 3. Handle Form Submit
   const handleSaveShelter = (e: React.FormEvent) => {
     e.preventDefault();
@@ -212,7 +216,7 @@ export const ResourcesTab: React.FC<ResourcesTabProps> = () => {
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 relative">
       {/* PART 1: SHELTERS ACTIVE LIST VIEWER */}
       <div className="bg-[#111c40] rounded-xl p-6 border border-slate-800">
-        <div className="flex justify-between items-center mb-5 border-b border-slate-800 pb-3">
+        <div className="flex justify-between items-center mb-3 border-b border-slate-800 pb-3">
           <div>
             <h2 className="font-black text-white text-lg">
               Shelter Management
@@ -221,7 +225,14 @@ export const ResourcesTab: React.FC<ResourcesTabProps> = () => {
               Track live emergency safe zones
             </p>
           </div>
-
+          <div className="bg-slate-900/80 px-4 py-2 rounded-xl border border-slate-700/60 flex items-center gap-2 shadow-inner h-10">
+            <span className="text-xs font-medium text-slate-400 uppercase tracking-wider">
+              Total:
+            </span>
+            <span className="text-cyan-400 font-black text-base">
+              {shelters.length}
+            </span>
+          </div>
           {/* TRIGGER BUTTON TO OPEN POPUP MODAL */}
           <button
             onClick={() => {
@@ -233,14 +244,30 @@ export const ResourcesTab: React.FC<ResourcesTabProps> = () => {
             + Register Shelter
           </button>
         </div>
-
-        <div className="space-y-4 max-h-[450px] overflow-y-auto pr-1">
+        {/* Live Filter Search Input */}
+        <div className="relative">
+          <span className="absolute inset-y-0 left-4 flex items-center text-slate-500 pointer-events-none">
+            🔍
+          </span>
+          <input
+            type="text"
+            placeholder="Search rescue teams by name..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full bg-[#0a1128] border border-slate-800 rounded-2xl pl-11 pr-4 py-3.5 text-sm focus:outline-none focus:ring-2 focus:ring-slate-700 transition-all text-white placeholder-slate-400"
+          />
+        </div>
+        <div className="space-y-4 max-h-[450px] overflow-y-auto pr-1 py-3.5">
           {shelters.length === 0 ? (
             <p className="text-xs text-slate-500 text-center py-8">
               No active shelters discovered.
             </p>
+          ) : filteredShelters.length === 0 ? (
+            <p className="text-xs text-slate-400 text-center py-12">
+              No safe shelter found. Try adjusting your search?
+            </p>
           ) : (
-            shelters.map((s) => (
+            filteredShelters.map((s) => (
               <div
                 key={s.id}
                 className="bg-[#0b132b] p-4 rounded-xl border border-slate-800/50"
@@ -284,9 +311,10 @@ export const ResourcesTab: React.FC<ResourcesTabProps> = () => {
                         <div className="absolute right-0 mt-1 w-32 bg-[#0b132b] border border-slate-700 rounded-xl shadow-2xl z-30 py-1.5 overflow-hidden animate-fade-in">
                           <button
                             onClick={(e) => {
+                              e.preventDefault();
                               e.stopPropagation();
+
                               handleEditClick(s);
-                              setShowRegisterModal(true);
                               setActiveDropdownId(null);
                             }}
                             className="w-full text-left px-4 py-2 text-xs text-cyan-400 hover:bg-slate-800 hover:text-white transition-colors font-semibold"
@@ -413,8 +441,8 @@ export const ResourcesTab: React.FC<ResourcesTabProps> = () => {
                   Shelter type
                 </label>
                 <select
-                  value={status}
-                  onChange={(e) => setStatus(e.target.value)}
+                  value={shelterType}
+                  onChange={(e) => setShelterType(e.target.value)}
                   className="w-full bg-[#0b132b] border border-slate-800 rounded-lg p-2 text-white text-sm focus:border-blue-500 outline-none"
                 >
                   <option value="Educational_Buildings">
