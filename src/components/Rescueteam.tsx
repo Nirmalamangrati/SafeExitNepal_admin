@@ -324,7 +324,6 @@ export default function Rescueteam({
                         >
                           ⋮
                         </button>
-
                         {activeMenuId === teamId && (
                           <div className="absolute right-0 mt-2 w-44 bg-[#0f172a] border border-slate-700/80 rounded-xl shadow-2xl z-30 overflow-hidden text-xs divide-y divide-slate-800/60">
                             {/* Quick Status Modifiers */}
@@ -357,7 +356,6 @@ export default function Rescueteam({
                                 Set On the Way
                               </button>
                             </div>
-
                             {/* Hard Structural Modifiers (Edit & Delete) */}
                             <div className="py-1 bg-slate-900/40">
                               <button
@@ -390,7 +388,6 @@ export default function Rescueteam({
           )}
         </div>
       </div>
-
       {/* Modal */}
       {isModalOpen && (
         <div
@@ -407,7 +404,6 @@ export default function Rescueteam({
                   ? " Edit Team Information"
                   : " Register New Rescue Team"}
               </h3>
-
               <button
                 onClick={() => setIsModalOpen(false)}
                 className="text-slate-400 hover:text-white text-xl"
@@ -415,7 +411,6 @@ export default function Rescueteam({
                 ✕
               </button>
             </div>
-
             <form
               onSubmit={handleFormSubmit}
               className="space-y-2 max-h-[420px] overflow-y-auto pr-2"
@@ -458,7 +453,6 @@ export default function Rescueteam({
                   required
                 />
               </div>
-
               <div>
                 <label className="block text-sm text-slate-300 mb-2">
                   Crew Members Count
@@ -485,7 +479,6 @@ export default function Rescueteam({
                   required
                 />
               </div>
-
               <div>
                 <label className="block text-sm text-slate-300 mb-2">
                   Website{" "}
@@ -512,7 +505,6 @@ export default function Rescueteam({
                   <option value="On the Way">🟡 On the Way</option>
                 </select>
               </div>
-
               <div className="flex justify-end gap-3 pt-4">
                 <button
                   type="button"
@@ -521,7 +513,6 @@ export default function Rescueteam({
                 >
                   Cancel
                 </button>
-
                 <button
                   type="submit"
                   className="px-4 py-2 rounded-xl bg-cyan-600 text-white hover:bg-cyan-500"
