@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-
 interface OfflineResource {
   id: string | number;
   title: string;
@@ -7,7 +6,6 @@ interface OfflineResource {
   size: string;
   status: "Synced" | "Update Available" | "Downloaded";
 }
-
 export const OfflineResources: React.FC = () => {
   const [offlineResources, setOfflineResources] = useState<OfflineResource[]>([
     {
@@ -25,14 +23,12 @@ export const OfflineResources: React.FC = () => {
       status: "Downloaded",
     },
   ]);
-
   const [newResTitle, setNewResTitle] = useState("");
   const [newResVersion, setNewResVersion] = useState("");
   const [newResSize, setNewResSize] = useState("");
   const [newResStatus, setNewResStatus] = useState<
     "Synced" | "Update Available" | "Downloaded"
   >("Synced");
-
   const handleAddOfflineResource = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newResTitle) return;
@@ -48,7 +44,6 @@ export const OfflineResources: React.FC = () => {
     setNewResVersion("");
     setNewResSize("");
   };
-
   const handleDeleteRes = (id: string | number) => {
     setOfflineResources(offlineResources.filter((r) => r.id !== id));
   };
@@ -60,7 +55,6 @@ export const OfflineResources: React.FC = () => {
     setNewResSize(resToEdit.size);
     setNewResStatus(resToEdit.status);
   };
-
   return (
     <div className="bg-[#111c40] rounded-xl p-6 border border-slate-800 space-y-6">
       <div>
@@ -120,7 +114,6 @@ export const OfflineResources: React.FC = () => {
             + Add File
           </button>
         </form>
-
         <div className="space-y-3 max-h-[250px] overflow-y-auto pr-1">
           {offlineResources.map((res) => (
             <div

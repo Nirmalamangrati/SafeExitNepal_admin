@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-
 interface RescueTeam {
   id?: string | number;
   _id?: string;
@@ -11,7 +10,6 @@ interface RescueTeam {
   status: string;
   location: string;
 }
-
 export default function Rescueteam({
   teams: initialTeams,
 }: {
@@ -24,7 +22,6 @@ export default function Rescueteam({
   const [activeMenuId, setActiveMenuId] = useState<string | number | null>(
     null,
   );
-
   // MODAL STATES
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingTeamId, setEditingTeamId] = useState<string | number | null>(
@@ -53,7 +50,6 @@ export default function Rescueteam({
     };
     fetchTeams();
   }, []);
-
   const openAddModal = () => {
     setEditingTeamId(null);
     setName("");
@@ -65,7 +61,6 @@ export default function Rescueteam({
     setStatus("Available");
     setIsModalOpen(true);
   };
-
   const openEditModal = (team: RescueTeam) => {
     const currentId = team._id || team.id || null;
     setEditingTeamId(currentId);
@@ -103,10 +98,8 @@ export default function Rescueteam({
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(teamPayload),
         });
-
         if (!response.ok) throw new Error("Failed to update team");
         const data = await response.json();
-
         setTeams((prev) =>
           prev.map((t) =>
             t.id === editingTeamId || t._id === editingTeamId ? data : t,
@@ -181,7 +174,6 @@ export default function Rescueteam({
       alert("Could not update status. Please try again.");
     }
   };
-
   // Performance optimized search filtering
   const filteredTeams = teams.filter((t) =>
     t.name.toLowerCase().includes(search.trim().toLowerCase()),
@@ -297,7 +289,6 @@ export default function Rescueteam({
                       </div>
                     </div>
                   </div>
-
                   <div className="pt-1">
                     <span
                       className={`inline-flex items-center px-2.5 py-1 text-xs font-semibold rounded-lg tracking-wide shadow-sm ${getStatusStyle(t.status)}`}
@@ -306,7 +297,6 @@ export default function Rescueteam({
                     </span>
                   </div>
                 </div>
-
                 {/* Actions Context Button (3-Dot) */}
                 <div className="relative">
                   {(() => {
