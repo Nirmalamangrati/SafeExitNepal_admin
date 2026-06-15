@@ -189,16 +189,13 @@ export default function Rescueteam({
     }
   };
   return (
-    <div className="bg-[#111c40] rounded-2xl p-6 border border-slate-800 shadow-2xl max-w-4xl mx-auto text-slate-100 font-sans antialiased relative max-h-[105vh] overflow-y-auto">
-      {/* Dashboard Top Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-3 pb-5 border-b border-slate-800">
+    <div className="bg-[#111c40] rounded-xl p-6 border border-slate-800">
+      <div className="flex justify-between items-center mb-3 border-b border-slate-800 pb-3">
         <div>
           <h2 className="text-xl font-extrabold tracking-tight text-white flex items-center gap-2">
             Rescue Operation Teams
           </h2>
-          <p className="text-xs text-slate-400 mt-1">
-            Manage and track emergency deployments
-          </p>
+          <p className="text-xs text-slate-400 mt-1"></p>
         </div>
         {/* Top Right Controls & Total Counter */}
         <div className="flex items-center gap-2 self-end sm:self-center">
