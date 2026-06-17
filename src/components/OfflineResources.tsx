@@ -235,7 +235,7 @@ export const OfflineResources: React.FC = () => {
     <div className="bg-[#111c40] rounded-xl p-6 border border-slate-800 space-y-6 max-w-2xl mx-auto">
       <div>
         <h2 className="font-black text-white text-lg mb-4">
-          Offline Resources (Database Synced)
+          Offline Resources
         </h2>
         <form
           onSubmit={handleAddOfflineResource}

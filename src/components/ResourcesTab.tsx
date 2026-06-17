@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { io } from "socket.io-client";
-import { CommunitySafety } from "./CommunitySafety";
 import { OfflineResources } from "./OfflineResources";
 import Rescueteam from "./Rescueteam";
+import { EmergencySosAdminWeb } from "./EmergencySos";
 
 const EARTH_RADIUS_KM = 6371;
 
@@ -219,7 +219,7 @@ export const ResourcesTab: React.FC<ResourcesTabProps> = () => {
         <div className="flex justify-between items-center mb-3 border-b border-slate-800 pb-3">
           <div>
             <h2 className="font-black text-white text-lg">
-              Shelter Management
+              Safe Zones & Shelters
             </h2>
             <p className="text-xs text-slate-400 mt-0.5">
               Track live emergency safe zones
@@ -615,7 +615,7 @@ export const ResourcesTab: React.FC<ResourcesTabProps> = () => {
 
       {/* OTHER VIEWS */}
       <Rescueteam teams={[]} />
-      <CommunitySafety />
+      <EmergencySosAdminWeb />
       <OfflineResources />
     </div>
   );
