@@ -164,7 +164,7 @@ export const EmergencySosAdminWeb = () => {
           </div>
 
           <div className="flex items-center gap-3 w-full sm:w-auto">
-            <div className="bg-slate-900 border border-slate-800 px-4 py-2.5 rounded-xl text-xs font-bold text-slate-400 shadow-sm text-center">
+            <div className="bg-slate-900  px-4 py-2.5 rounded-xl text-xs font-bold text-slate-400 shadow-sm text-center">
               <span className="text-xs font-medium text-slate-400 uppercase tracking-wider">
                 Total:
               </span>
@@ -187,8 +187,8 @@ export const EmergencySosAdminWeb = () => {
         {/* Dynamic Pop-up Modal Form Box */}
         {isModalOpen && (
           <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50 transition duration-300">
-            <div className="bg-[#111c38] border border-slate-800 p-6 rounded-2xl shadow-2xl w-full max-w-2xl transform scale-100 animate-in fade-in zoom-in-95 duration-150">
-              <div className="flex justify-between items-center mb-5 border-b border-slate-800 pb-3">
+            <div className="bg-[#111c38]  p-6 rounded-2xl shadow-2xl w-full max-w-2xl transform scale-100 animate-in fade-in zoom-in-95 duration-150">
+              <div className="flex justify-between items-center mb-5  pb-3">
                 <h2 className="text-sm font-black tracking-widest text-slate-200 uppercase">
                   {editingId
                     ? "⚙️ UPDATE REGISTRATION DETAILS"
