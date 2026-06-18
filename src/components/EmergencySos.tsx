@@ -46,7 +46,7 @@ const fuzzySearch = (query: string, text: string): boolean => {
   return queryWords.every((qWord) =>
     textWords.some((tWord) => {
       const distance = getLevenDistance(qWord, tWord);
-      const maxAllowedErrors = qWord.length > 4 ? 2 : 1;
+      const maxAllowedErrors = 4; //4 ota letter ko galti maag garidinxa
       return distance <= maxAllowedErrors;
     }),
   );

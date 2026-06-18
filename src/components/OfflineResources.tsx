@@ -44,6 +44,7 @@ export const OfflineResources: React.FC = () => {
   const [initialFetchDone, setInitialFetchDone] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isResModalOpen, setIsResModalOpen] = useState(false);
 
   //  2. Push Notification Orchestration Hook
   useEffect(() => {
@@ -232,118 +233,169 @@ export const OfflineResources: React.FC = () => {
     }
   };
   return (
-    <div className="bg-[#111c40] rounded-xl p-6 border border-slate-800 space-y-6 max-w-2xl mx-auto">
+    /* Changed max-w-5xl to w-full so it expands smoothly to equal your left panel width */
+    <div className="bg-[#111c40] rounded-xl p-6 border border-slate-800 space-y-6 w-full mx-auto">
       <div>
-        <h2 className="font-black text-white text-lg mb-4">
-          Offline Resources
-        </h2>
-        <form
-          onSubmit={handleAddOfflineResource}
-          className="bg-[#0b132b] p-4 rounded-xl border border-slate-800 mb-4 space-y-3"
-        >
-          <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider">
-            {editingId
-              ? "Update Selected Resource Configuration"
-              : "Add New Resource File"}
-          </h4>
-          <div className="w-full">
-            <input
-              type="file"
-              ref={fileInputRef}
-              onChange={handleFileChange}
-              className="hidden"
-              id="file-upload-input"
-              disabled={!!editingId}
-            />
-            <label
-              htmlFor="file-upload-input"
-              className={`flex items-center justify-center border border-slate-700 bg-[#111c40] rounded-lg p-2.5 text-sm text-slate-300 transition ${editingId ? "opacity-40 cursor-not-allowed" : "hover:text-white hover:border-indigo-500 cursor-pointer"}`}
-            >
-              {newResTitle
-                ? `Selected: ${newResTitle}`
-                : "📁 Click here to choose a file from your computer"}
-            </label>
+        {/* Header section with your original styling + modal trigger button */}
+        <div className="flex justify-between items-center mb-6">
+          <div>
+            <h2 className="font-black text-white text-lg mb-1">
+              Offline Resources
+            </h2>
+            <p className="text-slate-400 text-xs">
+              Manage localized backup resource nodes
+            </p>
           </div>
-          <input
-            type="text"
-            placeholder="Resource Title (Auto-filled)"
-            value={newResTitle}
-            disabled
-            className="w-full bg-[#111c40]/50 border border-slate-700 rounded-lg p-2 text-sm text-slate-400 focus:outline-none"
-          />
-          {/* Grid with 4 columns for Type, Version, Size, and Status */}
-          <div className="grid grid-cols-4 gap-2">
-            {/* 1. Resource Type Selection */}
-            <select
-              value={newResourceType}
-              onChange={(e) => setNewResourceType(e.target.value)}
-              className="w-full bg-[#111c40] border border-slate-700 rounded-lg p-2 text-sm text-white focus:outline-none focus:border-indigo-500"
-            >
-              <option value="Map">Map</option>
-              <option value="Guide">Guide</option>
-              <option value="Manual">Manual</option>
-              <option value="Procedure">Procedure</option>
-              <option value="Image">Image</option>
-            </select>
-            {/* 2. Version Input */}
-            <input
-              type="text"
-              placeholder="Version"
-              value={newResVersion}
-              onChange={(e) => setNewResVersion(e.target.value)}
-              className="w-full bg-[#111c40] border border-slate-700 rounded-lg p-2 text-sm text-white focus:outline-none focus:border-indigo-500"
-            />
-            {/* 3. Auto-calculated File Size */}
-            <input
-              type="text"
-              placeholder="Size"
-              value={newResSize}
-              disabled
-              className="w-full bg-[#111c40]/50 border border-slate-700 rounded-lg p-2 text-sm text-slate-400 focus:outline-none"
-            />
-            {/* 4. Availability Status Selection */}
-            <select
-              value={newResStatus}
-              onChange={(e) =>
-                setNewResStatus(
-                  e.target.value as
-                    | "Synced"
-                    | "Update Available"
-                    | "Downloaded",
-                )
-              }
-              className="w-full bg-[#111c40] border border-slate-700 rounded-lg p-2 text-sm text-white focus:outline-none focus:border-indigo-500"
-            >
-              <option value="Downloaded">Downloaded</option>
-              <option value="Synced">Synced</option>
-              <option value="Update Available">Update</option>
-            </select>
-          </div>
-          <div className="flex gap-2">
-            <button
-              type="submit"
-              disabled={loading}
-              className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-1.5 rounded-lg text-sm transition disabled:bg-slate-800 disabled:text-slate-500"
-            >
-              {loading
-                ? "Writing metadata changes..."
-                : editingId
-                  ? "Save Changes"
-                  : "+ Add resources"}
-            </button>
-            {editingId && (
+
+          {/* Click here to trigger the popup modal */}
+          <button
+            type="button"
+            onClick={() => setIsResModalOpen(true)}
+            className="bg-gradient-to-r from-[#0082c8] to-[#1259c4] hover:opacity-90 text-white font-bold text-xs py-2.5 px-5 rounded-xl transition shadow-md cursor-pointer tracking-wide"
+          >
+            + Add New Resource
+          </button>
+        </div>
+
+        {/* ========================================== */}
+        {/* 2. Popup Modal Overlay Form               */}
+        {/* ========================================== */}
+        {isResModalOpen && (
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+            {/* Form wrapper modal box */}
+            <div className="bg-[#111c40] rounded-xl p-6 border border-slate-800 w-full max-w-lg shadow-2xl relative">
+              {/* Top Right Close 'X' Button */}
               <button
                 type="button"
-                onClick={clearForm}
-                className="bg-slate-700 hover:bg-slate-600 text-white font-bold py-1.5 px-4 rounded-lg text-sm transition"
+                onClick={() => {
+                  clearForm();
+                  setIsResModalOpen(false);
+                }}
+                className="absolute top-4 right-4 text-slate-400 hover:text-white text-sm transition"
               >
-                Cancel
+                ✕
               </button>
-            )}
+
+              <form
+                onSubmit={(e) => {
+                  handleAddOfflineResource(e);
+                  setIsResModalOpen(false); // Close modal on submit
+                }}
+                className="bg-[#0b132b] p-4 rounded-xl border border-slate-800 space-y-3"
+              >
+                <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider">
+                  {editingId
+                    ? "Update Selected Resource Configuration"
+                    : "Add New Resource File"}
+                </h4>
+
+                <div className="w-full">
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    onChange={handleFileChange}
+                    className="hidden"
+                    id="file-upload-input"
+                    disabled={!!editingId}
+                  />
+                  <label
+                    htmlFor="file-upload-input"
+                    className={`flex items-center justify-center border border-slate-700 bg-[#111c40] rounded-lg p-2.5 text-sm text-slate-300 transition ${editingId ? "opacity-40 cursor-not-allowed" : "hover:text-white hover:border-indigo-500 cursor-pointer"}`}
+                  >
+                    {newResTitle
+                      ? `Selected: ${newResTitle}`
+                      : "📁 Click here to choose a file from your computer"}
+                  </label>
+                </div>
+
+                <input
+                  type="text"
+                  placeholder="Resource Title (Auto-filled)"
+                  value={newResTitle}
+                  disabled
+                  className="w-full bg-[#111c40]/50 border border-slate-700 rounded-lg p-2 text-sm text-slate-400 focus:outline-none"
+                />
+
+                {/* Grid with 4 columns for Type, Version, Size, and Status */}
+                <div className="grid grid-cols-4 gap-2">
+                  <select
+                    value={newResourceType}
+                    onChange={(e) => setNewResourceType(e.target.value)}
+                    className="w-full bg-[#111c40] border border-slate-700 rounded-lg p-2 text-sm text-white focus:outline-none focus:border-indigo-500"
+                  >
+                    <option value="Map">Map</option>
+                    <option value="Guide">Guide</option>
+                    <option value="Manual">Manual</option>
+                    <option value="Procedure">Procedure</option>
+                    <option value="Image">Image</option>
+                  </select>
+
+                  <input
+                    type="text"
+                    placeholder="Version"
+                    value={newResVersion}
+                    onChange={(e) => setNewResVersion(e.target.value)}
+                    className="w-full bg-[#111c40] border border-slate-700 rounded-lg p-2 text-sm text-white focus:outline-none focus:border-indigo-500"
+                  />
+
+                  <input
+                    type="text"
+                    placeholder="Size"
+                    value={newResSize}
+                    disabled
+                    className="w-full bg-[#111c40]/50 border border-slate-700 rounded-lg p-2 text-sm text-slate-400 focus:outline-none"
+                  />
+
+                  <select
+                    value={newResStatus}
+                    onChange={(e) =>
+                      setNewResStatus(
+                        e.target.value as
+                          | "Synced"
+                          | "Update Available"
+                          | "Downloaded",
+                      )
+                    }
+                    className="w-full bg-[#111c40] border border-slate-700 rounded-lg p-2 text-sm text-white focus:outline-none focus:border-indigo-500"
+                  >
+                    <option value="Downloaded">Downloaded</option>
+                    <option value="Synced">Synced</option>
+                    <option value="Update Available">Update</option>
+                  </select>
+                </div>
+
+                <div className="flex gap-2">
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-1.5 rounded-lg text-sm transition disabled:bg-slate-800 disabled:text-slate-500"
+                  >
+                    {loading
+                      ? "Writing metadata changes..."
+                      : editingId
+                        ? "Save Changes"
+                        : "+ Add resources"}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      clearForm();
+                      setIsResModalOpen(false);
+                    }}
+                    className="bg-slate-700 hover:bg-slate-600 text-white font-bold py-1.5 px-4 rounded-lg text-sm transition"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </form>
+            </div>
           </div>
-        </form>
-        {/*  Scrollable container with clean styled scrollbars for modern web browsers */}
-        <div className="space-y-3 max-h-[300px] overflow-y-auto block pr-2 scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-transparent">
+        )}
+
+        {/* ========================================== */}
+        {/* 3. Horizontal Wide Rows Layout             */}
+        {/* ========================================== */}
+        <div className="flex flex-col gap-3 w-full mt-4">
           {offlineResources.length === 0 ? (
             <p className="text-slate-500 text-xs text-center py-4">
               No active resources managed inside remote server cluster node
@@ -353,42 +405,50 @@ export const OfflineResources: React.FC = () => {
             offlineResources.map((res) => (
               <div
                 key={res._id}
-                className="bg-[#0b132b] p-4 rounded-xl border border-slate-800/50 flex justify-between items-start"
+                className="bg-[#111c38] border border-slate-900/50 p-5 rounded-xl flex items-center justify-between hover:border-slate-700 transition duration-150 shadow-md w-full"
               >
-                <div className="max-w-[70%]">
-                  <div className="flex items-center gap-2 flex-wrap">
+                {/* Left Side Content Core info details */}
+                <div className="flex flex-col">
+                  <div className="flex items-center gap-2">
                     <a
                       href={res.fileUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="font-bold text-white text-sm hover:text-indigo-400 hover:underline transition"
+                      className="font-bold text-white text-base hover:text-indigo-400 transition"
                     >
                       {res.title}
                     </a>
-                    <span className="text-[10px] bg-indigo-950 text-indigo-400 px-1.5 py-0.5 rounded font-mono">
+
+                    <span className="text-[10px] uppercase font-black px-1.5 py-0.5 rounded bg-indigo-950/60 border border-indigo-900/40 text-indigo-400 font-mono">
                       {res.resourceType || "Map"}
                     </span>
+
                     <span className="text-xs text-slate-500 font-mono">
                       {res.version || "v1.0.0"}
                     </span>
                   </div>
-                  <p className="text-xs text-slate-400 mt-1">
+
+                  <p className="text-slate-400 text-xs mt-1">
                     File Size: {res.size}
                   </p>
-                  <span className="inline-block mt-1 text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-950/50 text-emerald-400">
-                    {res.status}
-                  </span>
                 </div>
-                <div className="flex gap-2">
+
+                {/* Right Side Control Panel Buttons */}
+                <div className="flex items-center gap-4">
                   <button
-                    onClick={() => handleEditRes(res._id)}
-                    className="text-slate-500 hover:text-indigo-400 text-xs p-1"
+                    type="button"
+                    onClick={() => {
+                      handleEditRes(res._id);
+                      setIsResModalOpen(true);
+                    }}
+                    className="text-slate-400 hover:text-indigo-400 text-xs font-semibold transition cursor-pointer"
                   >
                     Edit
                   </button>
                   <button
+                    type="button"
                     onClick={() => handleDeleteRes(res._id)}
-                    className="text-slate-500 hover:text-red-400 text-xs p-1"
+                    className="text-slate-500 hover:text-red-400 text-xs font-semibold transition cursor-pointer"
                   >
                     Delete
                   </button>
