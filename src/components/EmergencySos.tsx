@@ -7,6 +7,51 @@ interface HotlineItem {
   icon: string;
   description: string;
 }
+// 1.advance fuzzy search algorithm
+const getLevenDistance = (a: string, b: string): number => {
+  if (a.length === 0) return b.length;
+  if (b.length === 0) return a.length;
+
+  const matrix: number[][] = [];
+  for (let i = 0; i <= b.length; i++) matrix[i] = [i];
+  for (let j = 0; j <= a.length; j++) matrix[0][j] = j;
+
+  for (let i = 1; i <= b.length; i++) {
+    for (let j = 1; j <= a.length; j++) {
+      if (b.charAt(i - 1) === a.charAt(j - 1)) {
+        matrix[i][j] = matrix[i - 1][j - 1];
+      } else {
+        //main part of this algorithm
+        matrix[i][j] = Math.min(
+          matrix[i - 1][j - 1] + 1, // substitution
+          matrix[i][j - 1] + 1, // insertion
+          matrix[i - 1][j] + 1, // deletion
+        );
+      }
+    }
+  }
+  return matrix[b.length][a.length];
+};
+
+const fuzzySearch = (query: string, text: string): boolean => {
+  const q = query.toLowerCase().trim();
+  const t = text.toLowerCase().trim();
+
+  if (!q) return true;
+  if (t.includes(q)) return true;
+
+  const queryWords = q.split(/\s+/);
+  const textWords = t.split(/\s+/);
+
+  return queryWords.every((qWord) =>
+    textWords.some((tWord) => {
+      const distance = getLevenDistance(qWord, tWord);
+      const maxAllowedErrors = qWord.length > 4 ? 2 : 1;
+      return distance <= maxAllowedErrors;
+    }),
+  );
+};
+// 2. main component
 
 export const EmergencySosAdminWeb = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -25,7 +70,7 @@ export const EmergencySosAdminWeb = () => {
   // Your Node.js Server URL
   const BACKEND_URL = "http://192.168.43.132:8000";
 
-  // 1. Fetch live database records when page loads
+  // Fetch live database records when page loads
   const fetchHotlines = async () => {
     try {
       setLoading(true);
@@ -35,7 +80,7 @@ export const EmergencySosAdminWeb = () => {
         setHotlines(data);
       }
     } catch (error) {
-      console.error("Failed to load records from MongoDB:", error);
+      console.error("Failed to load records :", error);
     } finally {
       setLoading(false);
     }
@@ -44,34 +89,29 @@ export const EmergencySosAdminWeb = () => {
   // React 19 safe async data fetching
   useEffect(() => {
     let isMounted = true;
-
     const loadData = async () => {
       if (isMounted) {
         await fetchHotlines();
       }
     };
-
     loadData();
-
     return () => {
-      isMounted = false; // Prevents memory leaks and cascading renders
+      isMounted = false;
     };
   }, []);
 
-  // 2. Create (Add) or Update (Edit) Action to MongoDB
-  const handleSaveHotline = async (e: SubmitEvent | React.SyntheticEvent) => {
+  // Create (Add) or Update (Edit) Action
+  const handleSaveHotline = async (
+    e: React.FormEvent | React.SyntheticEvent,
+  ) => {
     e.preventDefault();
-
     if (!name || !number || !description) {
       alert("Please fill all input fields.");
       return;
     }
-
     const payload = { name, number, description, category, icon };
-
     try {
       if (editingId) {
-        // PUT Request to Update existing record in MongoDB
         const response = await fetch(
           `${BACKEND_URL}/api/hotlines/${editingId}`,
           {
@@ -81,21 +121,18 @@ export const EmergencySosAdminWeb = () => {
           },
         );
         if (response.ok) {
-          alert("Emergency hotline updated in database!");
+          alert("Emergency hotline updated!");
         }
       } else {
-        // POST Request to Add new record to MongoDB
         const response = await fetch(`${BACKEND_URL}/api/hotlines`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),
         });
         if (response.ok) {
-          alert("New emergency hotline saved to MongoDB!");
+          alert("New emergency hotline added");
         }
       }
-
-      // Refresh data from server, reset fields and close modal
       fetchHotlines();
       setName("");
       setNumber("");
@@ -120,11 +157,11 @@ export const EmergencySosAdminWeb = () => {
     setIsModalOpen(true);
   };
 
-  // 3. DELETE Request to remove record from MongoDB
+  // DELETE Request to remove record from MongoDB
   const handleDelete = async (id: string) => {
     if (
       window.confirm(
-        "Are you sure you want to permanently delete this hotline from MongoDB?",
+        "Are you sure you want to permanently delete this hotline?",
       )
     ) {
       try {
@@ -132,8 +169,7 @@ export const EmergencySosAdminWeb = () => {
           method: "DELETE",
         });
         if (response.ok) {
-          alert("Permanently removed from database.");
-          fetchHotlines(); // Refresh list
+          fetchHotlines();
         }
       } catch (error) {
         console.error("Failed to load records from MongoDB:", error);
@@ -141,11 +177,12 @@ export const EmergencySosAdminWeb = () => {
       }
     }
   };
+  // 3. fuzzy search logic
 
   const filteredHotlines = hotlines.filter(
     (item) =>
-      item.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.number.includes(searchQuery),
+      fuzzySearch(searchQuery, item.name) ||
+      fuzzySearch(searchQuery, item.number),
   );
 
   return (
@@ -183,7 +220,6 @@ export const EmergencySosAdminWeb = () => {
             </button>
           </div>
         </div>
-
         {/* Dynamic Pop-up Modal Form Box */}
         {isModalOpen && (
           <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50 transition duration-300">
@@ -201,7 +237,6 @@ export const EmergencySosAdminWeb = () => {
                   ✕
                 </button>
               </div>
-
               <form onSubmit={handleSaveHotline} className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
@@ -216,7 +251,6 @@ export const EmergencySosAdminWeb = () => {
                       onChange={(e) => setName(e.target.value)}
                     />
                   </div>
-
                   <div>
                     <label className="block text-xs font-bold text-slate-400 mb-1.5 uppercase">
                       Hotline Number
@@ -229,7 +263,6 @@ export const EmergencySosAdminWeb = () => {
                       onChange={(e) => setNumber(e.target.value)}
                     />
                   </div>
-
                   <div>
                     <label className="block text-xs font-bold text-slate-400 mb-1.5 uppercase">
                       Classification
@@ -245,21 +278,24 @@ export const EmergencySosAdminWeb = () => {
                       <option value="National">National</option>
                     </select>
                   </div>
-
                   <div>
                     <label className="block text-xs font-bold text-slate-400 mb-1.5 uppercase">
                       Emoji Icon
                     </label>
-                    <input
-                      type="text"
-                      placeholder="🚨"
-                      className="w-full bg-[#1b2647] border border-slate-700 text-white rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-emerald-500 text-center transition"
+                    <select
+                      className="w-full bg-[#1b2647] border border-slate-700 text-white rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-emerald-500 transition cursor-pointer"
                       value={icon}
                       onChange={(e) => setIcon(e.target.value)}
-                    />
+                    >
+                      {/* Set the actual emoji symbol inside the value attribute */}
+                      <option value="👮">Nepal Police 👮</option>
+                      <option value="🚑">Ambulance 🚑</option>
+                      <option value="🚒">Fire Brigade 🚒</option>
+                      <option value="🪖">APF Support 🪖</option>
+                      <option value="➕">Red Cross ➕</option>
+                    </select>
                   </div>
                 </div>
-
                 <div>
                   <label className="block text-xs font-bold text-slate-400 mb-1.5 uppercase">
                     Short Description
@@ -272,7 +308,6 @@ export const EmergencySosAdminWeb = () => {
                     onChange={(e) => setDescription(e.target.value)}
                   />
                 </div>
-
                 {/* Submit & Cancel Buttons Panel */}
                 <div className="flex gap-3 pt-3 border-t border-slate-800/60">
                   <button
@@ -303,46 +338,42 @@ export const EmergencySosAdminWeb = () => {
             </div>
           </div>
         )}
-
         {/* Live Filter Search Input */}
-        <div className="bg-[#111c38]/40 border border-slate-800 px-4 py-3.5 rounded-2xl mb-8 flex items-center shadow-inner">
-          <span className="text-slate-400 mr-3 text-sm">🔍</span>
+        <div className="bg-[#111c38]/40 border border-slate-800 px-2 py-0 rounded-xl -mt-12 mb-3 flex items-center shadow-inner w-full">
+          <span className="text-slate-400 mr-1.5 text-[25px]">🔍</span>
           <input
             type="text"
-            placeholder="Search registered system entries by typing service name or contact number..."
-            className="bg-transparent text-white placeholder-slate-500 text-sm w-full focus:outline-none"
+            placeholder="Search..."
+            className="bg-transparent text-white placeholder-slate-500 text-[11px] w-full focus:outline-none py-1"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
         </div>
-
         {/* System Records Grid Panels */}
-        <h3 className="text-xs font-black tracking-widest text-slate-400 mb-5 uppercase">
-          Live Control Database
+        <h3 className="text-[15px] font-black tracking-widest text-slate-400 mb-1.5 uppercase">
+          Live Database
         </h3>
-
         {loading ? (
-          <div className="text-center text-gray-400 py-10 text-sm">
-            Loading hotlines from database...
+          <div className="max-w-[240px] w-full text-[10px] text-slate-400">
+            Loading...
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-4 w-full">
             {filteredHotlines.length === 0 ? (
-              <div className="text-slate-500 italic text-sm text-center col-span-full py-12 bg-slate-900/10 border border-dashed border-slate-800 rounded-2xl">
-                No registered emergency entries found. Add your first hotline
-                now!
+              <div className="text-slate-500 italic text-[10px] text-center py-4 bg-slate-900/10 border border-dashed border-slate-800 rounded-lg w-full">
+                No entries.
               </div>
             ) : (
               filteredHotlines.map((item) => (
                 <div
                   key={item._id}
-                  className="bg-[#111c38] border border-slate-800 p-5 rounded-2xl flex flex-col justify-between hover:border-slate-700 transition duration-200 shadow-md"
+                  className="bg-[#111c38] border border-slate-800 p-2 rounded-lg flex flex-col justify-between hover:border-slate-700 transition duration-200 shadow-sm"
                 >
                   <div>
-                    <div className="flex justify-between items-center mb-4">
-                      <span className="text-3xl">{item.icon}</span>
+                    <div className="flex justify-between items-center mb-1">
+                      <span className="text-base">{item.icon}</span>
                       <span
-                        className={`text-[10px] uppercase font-black px-2 py-0.5 rounded-md border ${
+                        className={`text-[7px] uppercase font-black px-1 py-0.1 rounded border-0.5 ${
                           item.category === "Security"
                             ? "bg-blue-950/50 border-blue-800 text-blue-400"
                             : item.category === "Medical"
@@ -356,36 +387,36 @@ export const EmergencySosAdminWeb = () => {
                       </span>
                     </div>
 
-                    <h4 className="text-white font-bold text-base mb-1">
+                    <h4 className="text-white font-bold text-[11px] mb-0.5 truncate">
                       {item.name}
                     </h4>
-
-                    <a
-                      href={`tel:${item.number}`}
-                      className="inline-flex items-center text-red-400 text-sm font-black mb-2 hover:text-red-300 transition gap-1.5 group"
-                    >
-                      Call: {item.number}
-                      <span className="text-xs bg-red-950/40 border border-red-900 px-1.5 py-0.5 rounded text-red-400 group-hover:bg-red-900 group-hover:text-white transition">
-                        📞 Call Now
-                      </span>
-                    </a>
-
-                    <p className="text-slate-400 text-xs leading-relaxed mb-6 line-clamp-2">
+                    <div className="mb-1">
+                      <a
+                        href={`tel:${item.number}`}
+                        className="inline-flex items-center text-red-400 text-[9px] font-black hover:text-red-300 transition gap-1 group"
+                      >
+                        {item.number}
+                        <span className="text-[7px] bg-red-950/40 border border-red-900 px-0.5 py-0.1 rounded text-red-400 group-hover:bg-red-900 group-hover:text-white transition">
+                          📞
+                        </span>
+                      </a>
+                    </div>
+                    <p className="text-slate-400 text-[9px] leading-tight mb-1 truncate">
                       {item.description}
                     </p>
                   </div>
 
                   {/* Management Operations Control Panel */}
-                  <div className="flex gap-3 border-t border-slate-800/60 pt-4 mt-auto">
+                  <div className="flex gap-1 border-t border-slate-800/40 pt-1 mt-1">
                     <button
                       onClick={() => handleEditTrigger(item)}
-                      className="flex-1 bg-[#1b2647] hover:bg-slate-700 text-amber-400 border border-slate-700/50 text-xs font-bold py-2.5 rounded-xl transition duration-150 cursor-pointer"
+                      className="flex-1 bg-[#1b2647] hover:bg-slate-700 text-amber-400 border border-slate-700/50 text-[9px] font-bold py-0.5 rounded transition duration-150 cursor-pointer"
                     >
                       Edit
                     </button>
                     <button
                       onClick={() => handleDelete(item._id)}
-                      className="flex-1 bg-red-950/30 hover:bg-red-950/50 text-red-400 border border-red-900/40 text-xs font-bold py-2.5 rounded-xl transition duration-150 cursor-pointer"
+                      className="flex-1 bg-red-950/30 hover:bg-red-950/50 text-red-400 border border-red-900/40 text-[9px] font-bold py-0.5 rounded transition duration-150 cursor-pointer"
                     >
                       Delete
                     </button>
