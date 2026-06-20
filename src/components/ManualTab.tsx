@@ -294,7 +294,6 @@ export const ManualTab: React.FC<ManualTabProps> = ({
             />
           </div>
         </div>
-
         {nearestShelter && (
           <div className="bg-[#0b132b] border border-slate-800 rounded-xl p-3.5">
             <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">
@@ -315,7 +314,6 @@ export const ManualTab: React.FC<ManualTabProps> = ({
             </p>
           </div>
         )}
-
         <button
           type="submit"
           disabled={isSubmitting || !manualLat}
