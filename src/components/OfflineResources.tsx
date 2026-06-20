@@ -256,10 +256,7 @@ export const OfflineResources: React.FC = () => {
             + Add New Resource
           </button>
         </div>
-
-        {/* ========================================== */}
         {/* 2. Popup Modal Overlay Form               */}
-        {/* ========================================== */}
         {isResModalOpen && (
           <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
             {/* Form wrapper modal box */}
@@ -392,9 +389,9 @@ export const OfflineResources: React.FC = () => {
           </div>
         )}
 
-        {/* ========================================== */}
+     
         {/* 3. Horizontal Wide Rows Layout             */}
-        {/* ========================================== */}
+       
         <div className="flex flex-col gap-3 w-full mt-4">
           {offlineResources.length === 0 ? (
             <p className="text-slate-500 text-xs text-center py-4">

@@ -7,14 +7,12 @@ interface Alert {
 interface AnalyticsTabProps {
   criticalAlerts: Alert[];
 }
-
 export const AnalyticsTab: React.FC<AnalyticsTabProps> = ({
   criticalAlerts,
 }) => {
   return (
     <div className="bg-[#111c40] rounded-xl border border-slate-800 p-6">
       <h2 className="font-black mb-6">Incident Analytics</h2>
-
       <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
         <div className="bg-red-950 p-5 rounded-xl text-center">
           <h3 className="text-3xl font-black">
@@ -39,7 +37,6 @@ export const AnalyticsTab: React.FC<AnalyticsTabProps> = ({
           </h3>
           <p className="text-amber-400 text-sm">Escalated</p>
         </div>
-
         <div className="bg-emerald-950 p-5 rounded-xl text-center">
           <h3 className="text-3xl font-black">
             {criticalAlerts.filter((a) => a.status === "RESOLVED").length}
