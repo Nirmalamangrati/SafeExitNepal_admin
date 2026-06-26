@@ -271,7 +271,6 @@ export const OfflineResources: React.FC = () => {
               >
                 ✕
               </button>
-
               <form
                 onSubmit={(e) => {
                   handleAddOfflineResource(e);
@@ -284,7 +283,6 @@ export const OfflineResources: React.FC = () => {
                     ? "Update Selected Resource Configuration"
                     : "Add New Resource File"}
                 </h4>
-
                 <div className="w-full">
                   <input
                     type="file"
@@ -303,7 +301,6 @@ export const OfflineResources: React.FC = () => {
                       : "📁 Click here to choose a file from your computer"}
                   </label>
                 </div>
-
                 <input
                   type="text"
                   placeholder="Resource Title (Auto-filled)"
@@ -311,7 +308,6 @@ export const OfflineResources: React.FC = () => {
                   disabled
                   className="w-full bg-[#111c40]/50 border border-slate-700 rounded-lg p-2 text-sm text-slate-400 focus:outline-none"
                 />
-
                 {/* Grid with 4 columns for Type, Version, Size, and Status */}
                 <div className="grid grid-cols-4 gap-2">
                   <select
