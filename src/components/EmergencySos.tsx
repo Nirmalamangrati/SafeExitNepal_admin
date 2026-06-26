@@ -36,13 +36,10 @@ const getLevenDistance = (a: string, b: string): number => {
 const fuzzySearch = (query: string, text: string): boolean => {
   const q = query.toLowerCase().trim();
   const t = text.toLowerCase().trim();
-
   if (!q) return true;
   if (t.includes(q)) return true;
-
   const queryWords = q.split(/\s+/);
   const textWords = t.split(/\s+/);
-
   return queryWords.every((qWord) =>
     textWords.some((tWord) => {
       const distance = getLevenDistance(qWord, tWord);
@@ -52,7 +49,6 @@ const fuzzySearch = (query: string, text: string): boolean => {
   );
 };
 // 2. main component
-
 export const EmergencySosAdminWeb = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
