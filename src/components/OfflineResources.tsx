@@ -321,7 +321,6 @@ export const OfflineResources: React.FC = () => {
                     <option value="Procedure">Procedure</option>
                     <option value="Image">Image</option>
                   </select>
-
                   <input
                     type="text"
                     placeholder="Version"
@@ -329,7 +328,6 @@ export const OfflineResources: React.FC = () => {
                     onChange={(e) => setNewResVersion(e.target.value)}
                     className="w-full bg-[#111c40] border border-slate-700 rounded-lg p-2 text-sm text-white focus:outline-none focus:border-indigo-500"
                   />
-
                   <input
                     type="text"
                     placeholder="Size"
@@ -337,7 +335,6 @@ export const OfflineResources: React.FC = () => {
                     disabled
                     className="w-full bg-[#111c40]/50 border border-slate-700 rounded-lg p-2 text-sm text-slate-400 focus:outline-none"
                   />
-
                   <select
                     value={newResStatus}
                     onChange={(e) =>
