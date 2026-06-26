@@ -246,7 +246,6 @@ export const OfflineResources: React.FC = () => {
               Manage localized backup resource nodes
             </p>
           </div>
-
           {/* Click here to trigger the popup modal */}
           <button
             type="button"
@@ -389,9 +388,8 @@ export const OfflineResources: React.FC = () => {
           </div>
         )}
 
-     
         {/* 3. Horizontal Wide Rows Layout             */}
-       
+
         <div className="flex flex-col gap-3 w-full mt-4">
           {offlineResources.length === 0 ? (
             <p className="text-slate-500 text-xs text-center py-4">
