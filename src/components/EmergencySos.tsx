@@ -152,7 +152,6 @@ export const EmergencySosAdminWeb = () => {
     setIcon(item.icon);
     setIsModalOpen(true);
   };
-
   // DELETE Request to remove record from MongoDB
   const handleDelete = async (id: string) => {
     if (
@@ -180,7 +179,6 @@ export const EmergencySosAdminWeb = () => {
       fuzzySearch(searchQuery, item.name) ||
       fuzzySearch(searchQuery, item.number),
   );
-
   return (
     <div className="bg-[#111c40] rounded-xl p-6 border border-slate-800 space-y-6 max-w-2xl mx-auto">
       <div className="max-w-5xl mx-auto">
