@@ -193,7 +193,6 @@ export const EmergencySosAdminWeb = () => {
               hotlines database.
             </p>
           </div>
-
           <div className="flex items-center gap-3 w-full sm:w-auto">
             <div className="bg-slate-900  px-4 py-2.5 rounded-xl text-xs font-bold text-slate-400 shadow-sm text-center">
               <span className="text-xs font-medium text-slate-400 uppercase tracking-wider">
