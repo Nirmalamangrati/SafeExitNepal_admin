@@ -379,7 +379,6 @@ export const EmergencySosAdminWeb = () => {
                         {item.category}
                       </span>
                     </div>
-
                     <h4 className="text-white font-bold text-[11px] mb-0.5 truncate">
                       {item.name}
                     </h4>
@@ -398,7 +397,6 @@ export const EmergencySosAdminWeb = () => {
                       {item.description}
                     </p>
                   </div>
-
                   {/* Management Operations Control Panel */}
                   <div className="flex gap-1 border-t border-slate-800/40 pt-1 mt-1">
                     <button
