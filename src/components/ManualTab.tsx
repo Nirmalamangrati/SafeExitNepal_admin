@@ -142,7 +142,6 @@ function MapClickHandler({
   });
   return null;
 }
-
 export const ManualTab: React.FC<ManualTabProps> = ({
   manualType,
   setManualType,
