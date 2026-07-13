@@ -211,7 +211,6 @@ export const OfflineResources: React.FC = () => {
     setNewResSize(resToEdit.size);
     setNewResStatus(resToEdit.status);
   };
-
   const handleDeleteRes = async (id: string) => {
     if (
       !window.confirm(
