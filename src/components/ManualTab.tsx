@@ -50,9 +50,7 @@ function MapClickHandler({
       const clickedLng = e.latlng.lng;
       setManualLat(clickedLat.toFixed(4));
       setManualLng(clickedLng.toFixed(4));
-
       setIsReverseGeocoding(true);
-
       try {
         const res = await fetch(
           `https://openstreetmap.org{clickedLat}&lon=${clickedLng}`,
@@ -65,7 +63,6 @@ function MapClickHandler({
           },
         );
         const data = await res.json();
-
         if (data && data.address) {
           const addr = data.address;
 
