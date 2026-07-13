@@ -237,7 +237,6 @@ export const ManualTab: React.FC<ManualTabProps> = ({
               <option value="FIRE">FIRE</option>
             </select>
           </div>
-
           <div>
             <label className="text-xs font-bold text-slate-300">Category</label>
             <select
@@ -252,7 +251,6 @@ export const ManualTab: React.FC<ManualTabProps> = ({
             </select>
           </div>
         </div>
-
         <div>
           <label className="text-xs font-bold text-slate-300">
             Location Name
