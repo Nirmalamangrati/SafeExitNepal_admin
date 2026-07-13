@@ -352,7 +352,6 @@ export const OfflineResources: React.FC = () => {
                     <option value="Update Available">Update</option>
                   </select>
                 </div>
-
                 <div className="flex gap-2">
                   <button
                     type="submit"
