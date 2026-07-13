@@ -269,7 +269,6 @@ export const ManualTab: React.FC<ManualTabProps> = ({
             className="w-full bg-[#0b132b] border border-slate-700 rounded-xl p-2.5 mt-1 text-xs text-slate-300 focus:outline-none focus:ring-1 focus:ring-slate-500"
           />
         </div>
-
         <div className="grid grid-cols-2 gap-3">
           <div>
             <label className="text-xs font-bold text-slate-300">
