@@ -14,7 +14,7 @@ interface OfflineResource {
 }
 
 //  1. Global App Configuration Placements (Declared above component scope)
-const BACKEND_URL = "http://192.168.43.132:8000";
+const BACKEND_URL = "https://safeexitnepal-backend-2.onrender.com";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDhdIUq-0Gs26g4d_0uHTL2eAwFg0JmGow",

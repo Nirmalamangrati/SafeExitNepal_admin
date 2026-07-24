@@ -35,7 +35,7 @@ export default function Rescueteam({
   const [teamWebsite, setTeamWebsite] = useState("");
   const [teamLocation, setTeamLocation] = useState("");
   const [status, setStatus] = useState("Available");
-  const baseUrl = "http://192.168.43.132:8000/api/teams";
+  const baseUrl = "https://safeexitnepal-backend-2.onrender.com/api/teams";
   // INITIAL DATA FETCH
   useEffect(() => {
     const fetchTeams = async () => {

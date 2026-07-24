@@ -41,14 +41,14 @@ interface Shelter {
 interface ResourcesTabProps {
   initialShelters: Shelter[];
 }
-const socket = io("http://192.168.43.132:8000");
+const socket = io("https://safeexitnepal-backend-2.onrender.com");
 export const ResourcesTab: React.FC<ResourcesTabProps> = () => {
   const [shelters, setShelters] = useState<Shelter[]>([]);
   const [userLocation, setUserLocation] = useState<{
     lat: number;
     lng: number;
   } | null>(null);
-  // --- Admin Panel States ---
+  //Admin Panel States
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [currentShelterId, setCurrentShelterId] = useState<
     string | number | null

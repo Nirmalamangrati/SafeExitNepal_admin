@@ -64,7 +64,7 @@ export const EmergencySosAdminWeb = () => {
   const [editingId, setEditingId] = useState<string | null>(null);
 
   // Your Node.js Server URL
-  const BACKEND_URL = "http://192.168.43.132:8000";
+  const BACKEND_URL = "https://safeexitnepal-backend-2.onrender.com";
 
   // Fetch live database records when page loads
   const fetchHotlines = async () => {

@@ -38,7 +38,7 @@ interface BackendIncidentPayload {
   };
 }
 // SOCKET URL
-const SOCKET_SERVER_URL = "http://192.168.43.132:8000";
+const SOCKET_SERVER_URL = "https://safeexitnepal-backend-2.onrender.com";
 //MAP VIEW
 function ChangeView({ center }: { center: [number, number] }) {
   const map = useMap();
