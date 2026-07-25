@@ -1,0 +1,12 @@
+{
+  "expo": {
+    "extra": {
+      "eas": {
+        "projectId": "97ac90cf-6a4d-42bb-a121-a755225fc191"
+      }
+    },
+    "android": {
+      "package": "com.safeexitnepal.safeexitadmin"
+    }
+  }
+}

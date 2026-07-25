@@ -134,7 +134,6 @@ export default function Rescueteam({
   //  REMOVE TEAM FUNCTION (DELETE)
   const handleDeleteTeam = async (id: string | number) => {
     if (!window.confirm("Are you sure you want to delete this team?")) return;
-
     try {
       const response = await fetch(`${baseUrl}/${id}`, {
         method: "DELETE",
