@@ -43,7 +43,6 @@ interface BackendIncidentPayload {
 const SOCKET_SERVER_URL = "https://safeexitnepal-backend-2.onrender.com";
 
 /* MAP VIEW CONTROLLER */
-
 function ChangeView({ center }: { center: [number, number] }) {
   const map = useMap();
   useEffect(() => {
