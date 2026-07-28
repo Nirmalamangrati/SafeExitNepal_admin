@@ -94,7 +94,6 @@ function Login({ onLogin }: { onLogin: () => void }): React.JSX.Element {
           {/* EMAIL */}
           <div className="mb-4">
             <label className="block text-sm text-slate-300 mb-2">Email</label>
-
             <input
               type="email"
               placeholder="Enter your email"
