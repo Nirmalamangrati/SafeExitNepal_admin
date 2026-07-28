@@ -60,7 +60,6 @@ function Login({ onLogin }: { onLogin: () => void }): React.JSX.Element {
     e.preventDefault();
     const ADMIN_EMAIL = "nishamgrt@gmail.com";
     const ADMIN_PASSWORD = "SafeExitNepal@123";
-
     if (email.trim() !== ADMIN_EMAIL || password !== ADMIN_PASSWORD) {
       alert("Invalid email or password");
       return;
