@@ -58,7 +58,6 @@ function Login({ onLogin }: { onLogin: () => void }): React.JSX.Element {
   const [password, setPassword] = useState("");
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-
     const ADMIN_EMAIL = "nishamgrt@gmail.com";
     const ADMIN_PASSWORD = "SafeExitNepal@123";
 
