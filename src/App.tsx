@@ -53,7 +53,6 @@ function ChangeView({ center }: { center: [number, number] }) {
 }
 
 /* LOGIN PAGE */
-
 function Login({ onLogin }: { onLogin: () => void }): React.JSX.Element {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
