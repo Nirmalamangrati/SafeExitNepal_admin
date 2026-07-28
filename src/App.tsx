@@ -150,7 +150,6 @@ export default function App(): React.JSX.Element {
   const [currentTab, setCurrentTab] = useState<
     "incidents" | "resources" | "analytics" | "manual"
   >("incidents");
-
   const [criticalAlerts, setCriticalAlerts] = useState<SOSAlertPayload[]>([]);
 
   /*   SOUND */
