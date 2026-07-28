@@ -65,7 +65,6 @@ function Login({ onLogin }: { onLogin: () => void }): React.JSX.Element {
       return;
     }
     localStorage.setItem("userLoggedIn", "true");
-
     onLogin();
   };
   return (
