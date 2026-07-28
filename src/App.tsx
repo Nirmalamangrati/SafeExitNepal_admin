@@ -46,7 +46,6 @@ const SOCKET_SERVER_URL = "https://safeexitnepal-backend-2.onrender.com";
 
 function ChangeView({ center }: { center: [number, number] }) {
   const map = useMap();
-
   useEffect(() => {
     map.setView(center, 13);
   }, [center, map]);
