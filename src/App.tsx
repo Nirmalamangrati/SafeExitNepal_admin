@@ -80,7 +80,6 @@ function Login({ onLogin }: { onLogin: () => void }): React.JSX.Element {
             <div className="w-16 h-16 rounded-2xl bg-red-500/10 border border-red-500/30 flex items-center justify-center mb-4">
               <ShieldAlert size={36} className="text-red-500" />
             </div>
-
             <h1 className="text-2xl font-black text-red-500">SafeExit Nepal</h1>
 
             <p className="text-slate-400 text-sm mt-2">
