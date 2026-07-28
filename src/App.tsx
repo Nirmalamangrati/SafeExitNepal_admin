@@ -138,7 +138,6 @@ function Login({ onLogin }: { onLogin: () => void }): React.JSX.Element {
             Login to Command Center
           </button>
         </form>
-
         <p className="text-center text-slate-500 text-xs mt-4">
           SafeExit Nepal Emergency Management System
         </p>
