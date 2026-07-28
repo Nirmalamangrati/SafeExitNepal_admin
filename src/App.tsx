@@ -56,7 +56,6 @@ function ChangeView({ center }: { center: [number, number] }) {
 function Login({ onLogin }: { onLogin: () => void }): React.JSX.Element {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
 
