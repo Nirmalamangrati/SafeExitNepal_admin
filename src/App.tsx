@@ -108,7 +108,6 @@ function Login({ onLogin }: { onLogin: () => void }): React.JSX.Element {
             <label className="block text-sm text-slate-300 mb-2">
               Password
             </label>
-
             <input
               type="password"
               placeholder="Enter your password"
