@@ -157,7 +157,6 @@ export default function App(): React.JSX.Element {
   const [mapCenter, setMapCenter] = useState<[number, number]>([
     27.7172, 85.324,
   ]);
-
   /*    MANUAL ALERT STATES */
 
   const [manualType, setManualType] = useState<string>("FLOOD");
