@@ -150,7 +150,6 @@ export default function App(): React.JSX.Element {
     "incidents" | "resources" | "analytics" | "manual"
   >("incidents");
   const [criticalAlerts, setCriticalAlerts] = useState<SOSAlertPayload[]>([]);
-
   /*   SOUND */
 
   const [interacted, setInteracted] = useState<boolean>(false);
