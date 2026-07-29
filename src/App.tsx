@@ -160,7 +160,6 @@ export default function App(): React.JSX.Element {
   /*    MANUAL ALERT STATES */
   const [manualType, setManualType] = useState<string>("FLOOD");
   const [manualCategory, setManualCategory] = useState<string>("HIGH");
-
   const [locationName, setLocationName] = useState<string>("");
 
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
