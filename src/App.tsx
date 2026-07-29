@@ -48,7 +48,6 @@ function ChangeView({ center }: { center: [number, number] }) {
   useEffect(() => {
     map.setView(center, 13);
   }, [center, map]);
-
   return null;
 }
 
