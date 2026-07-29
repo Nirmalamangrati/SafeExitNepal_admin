@@ -152,7 +152,6 @@ export default function App(): React.JSX.Element {
   const [criticalAlerts, setCriticalAlerts] = useState<SOSAlertPayload[]>([]);
   /*   SOUND */
   const [interacted, setInteracted] = useState<boolean>(false);
-
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   /* MAP */
