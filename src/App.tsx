@@ -153,7 +153,6 @@ export default function App(): React.JSX.Element {
   /*   SOUND */
   const [interacted, setInteracted] = useState<boolean>(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
-
   /* MAP */
 
   const [mapCenter, setMapCenter] = useState<[number, number]>([
