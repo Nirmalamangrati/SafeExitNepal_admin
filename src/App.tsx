@@ -158,7 +158,6 @@ export default function App(): React.JSX.Element {
     27.7172, 85.324,
   ]);
   /*    MANUAL ALERT STATES */
-
   const [manualType, setManualType] = useState<string>("FLOOD");
 
   const [manualCategory, setManualCategory] = useState<string>("HIGH");
