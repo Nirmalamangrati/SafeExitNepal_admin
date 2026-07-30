@@ -165,7 +165,6 @@ export default function App(): React.JSX.Element {
   const [manualLat, setManualLat] = useState<string>("27.7172");
   const [manualLng, setManualLng] = useState<string>("85.3240");
   /* SHELTERS*/
-
   const shelters = [
     {
       id: 1,
