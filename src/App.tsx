@@ -204,9 +204,8 @@ export default function App(): React.JSX.Element {
     }
   };
   /* FETCH INITIAL INCIDENTS + SOCKET */
-
   useEffect(() => {
-    // Login नगरेसम्म backend connection नगर्ने
+    // Login nagaresamma backend connection nagarne
     if (!isAuthenticated) {
       return;
     }
