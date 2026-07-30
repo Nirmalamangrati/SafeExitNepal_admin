@@ -200,7 +200,6 @@ export default function App(): React.JSX.Element {
   const triggerAlertSound = () => {
     if (audioRef.current) {
       audioRef.current.currentTime = 0;
-
       audioRef.current.play().catch(() => {});
     }
   };
