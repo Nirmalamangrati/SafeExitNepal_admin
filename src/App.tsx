@@ -162,7 +162,6 @@ export default function App(): React.JSX.Element {
   const [manualCategory, setManualCategory] = useState<string>("HIGH");
   const [locationName, setLocationName] = useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-
   const [manualLat, setManualLat] = useState<string>("27.7172");
 
   const [manualLng, setManualLng] = useState<string>("85.3240");
