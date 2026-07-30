@@ -196,7 +196,6 @@ export default function App(): React.JSX.Element {
       lng: 85.3341,
     },
   ];
-
   /*  SOUND FUNCTION */
 
   const triggerAlertSound = () => {
