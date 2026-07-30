@@ -204,7 +204,6 @@ export default function App(): React.JSX.Element {
       audioRef.current.play().catch(() => {});
     }
   };
-
   /* FETCH INITIAL INCIDENTS + SOCKET */
 
   useEffect(() => {
