@@ -209,7 +209,6 @@ export default function App(): React.JSX.Element {
     if (!isAuthenticated) {
       return;
     }
-
     const fetchInitialIncidents = async () => {
       try {
         const response = await fetch(`${SOCKET_SERVER_URL}/api/incidents`);
