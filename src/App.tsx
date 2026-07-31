@@ -212,7 +212,6 @@ export default function App(): React.JSX.Element {
     const fetchInitialIncidents = async () => {
       try {
         const response = await fetch(`${SOCKET_SERVER_URL}/api/incidents`);
-
         const data = await response.json();
 
         if (response.ok && Array.isArray(data)) {
