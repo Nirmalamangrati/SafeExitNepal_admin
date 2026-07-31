@@ -213,7 +213,6 @@ export default function App(): React.JSX.Element {
       try {
         const response = await fetch(`${SOCKET_SERVER_URL}/api/incidents`);
         const data = await response.json();
-
         if (response.ok && Array.isArray(data)) {
           const formattedData: SOSAlertPayload[] = data.map(
             (newIncident: BackendIncidentPayload) => ({
