@@ -224,7 +224,6 @@ export default function App(): React.JSX.Element {
                 lng: Number(newIncident.longitude) || 85.324,
               },
               locationName: newIncident.locationName || "Kapan, Kathmandu",
-
               status:
                 (newIncident.status as SOSAlertPayload["status"]) || "PENDING",
 
