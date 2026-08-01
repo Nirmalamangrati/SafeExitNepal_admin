@@ -226,7 +226,6 @@ export default function App(): React.JSX.Element {
               locationName: newIncident.locationName || "Kapan, Kathmandu",
               status:
                 (newIncident.status as SOSAlertPayload["status"]) || "PENDING",
-
               incidentCategory:
                 newIncident.incidentType ||
                 newIncident.incidentCategory ||
