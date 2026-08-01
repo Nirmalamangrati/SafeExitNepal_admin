@@ -232,7 +232,6 @@ export default function App(): React.JSX.Element {
                 "GENERAL",
             }),
           );
-
           setCriticalAlerts(formattedData);
 
           if (formattedData.length > 0) {
