@@ -245,7 +245,6 @@ export default function App(): React.JSX.Element {
         console.error("Database initialization fetch failed:", err);
       }
     };
-
     fetchInitialIncidents();
 
     /* SOCKET CONNECTION */
