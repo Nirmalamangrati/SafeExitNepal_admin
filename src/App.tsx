@@ -248,7 +248,6 @@ export default function App(): React.JSX.Element {
     fetchInitialIncidents();
     /* SOCKET CONNECTION */
     const socket: Socket = io(SOCKET_SERVER_URL);
-
     socket.on("admin-new-incident", (newIncident: BackendIncidentPayload) => {
       const mappedIncident: SOSAlertPayload = {
         eventId: newIncident._id || Math.random().toString(36).substr(2, 9),
