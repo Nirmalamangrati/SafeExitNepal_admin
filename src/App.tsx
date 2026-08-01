@@ -219,7 +219,6 @@ export default function App(): React.JSX.Element {
               eventId:
                 newIncident._id || Math.random().toString(36).substr(2, 9),
               victim: newIncident.reporterInfo?.yourName || "Unknown Reporter",
-
               location: {
                 lat: Number(newIncident.latitude) || 27.7172,
 
