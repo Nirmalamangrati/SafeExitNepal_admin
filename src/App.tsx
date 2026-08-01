@@ -246,7 +246,6 @@ export default function App(): React.JSX.Element {
       }
     };
     fetchInitialIncidents();
-
     /* SOCKET CONNECTION */
 
     const socket: Socket = io(SOCKET_SERVER_URL);
