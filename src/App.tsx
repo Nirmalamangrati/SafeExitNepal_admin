@@ -233,7 +233,6 @@ export default function App(): React.JSX.Element {
             }),
           );
           setCriticalAlerts(formattedData);
-
           if (formattedData.length > 0) {
             setMapCenter([
               formattedData[0].location.lat,
