@@ -273,7 +273,6 @@ export default function App(): React.JSX.Element {
     };
   }, [isAuthenticated]);
   /* UPDATE INCIDENT STATUS */
-
   const updateIncidentStatus = async (
     eventId: string,
     newStatus: SOSAlertPayload["status"],
