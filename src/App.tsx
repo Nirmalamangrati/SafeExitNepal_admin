@@ -255,7 +255,6 @@ export default function App(): React.JSX.Element {
           typeof newIncident.reporterInfo === "string"
             ? JSON.parse(newIncident.reporterInfo)?.yourName
             : newIncident.reporterInfo?.yourName || "Command Center",
-
         location: {
           lat: Number(newIncident.latitude) || 27.7172,
 
