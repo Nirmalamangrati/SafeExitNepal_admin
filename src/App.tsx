@@ -266,7 +266,6 @@ export default function App(): React.JSX.Element {
       };
       setCriticalAlerts((prev) => [mappedIncident, ...prev]);
       setMapCenter([mappedIncident.location.lat, mappedIncident.location.lng]);
-
       triggerAlertSound();
     });
 
