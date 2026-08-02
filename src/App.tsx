@@ -257,7 +257,6 @@ export default function App(): React.JSX.Element {
             : newIncident.reporterInfo?.yourName || "Command Center",
         location: {
           lat: Number(newIncident.latitude) || 27.7172,
-
           lng: Number(newIncident.longitude) || 85.324,
         },
 
