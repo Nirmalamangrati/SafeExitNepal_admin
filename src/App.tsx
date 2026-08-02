@@ -264,7 +264,6 @@ export default function App(): React.JSX.Element {
         incidentCategory:
           newIncident.incidentType || newIncident.incidentCategory || "GENERAL",
       };
-
       setCriticalAlerts((prev) => [mappedIncident, ...prev]);
 
       setMapCenter([mappedIncident.location.lat, mappedIncident.location.lng]);
