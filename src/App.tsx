@@ -272,7 +272,6 @@ export default function App(): React.JSX.Element {
       socket.disconnect();
     };
   }, [isAuthenticated]);
-
   /* UPDATE INCIDENT STATUS */
 
   const updateIncidentStatus = async (
