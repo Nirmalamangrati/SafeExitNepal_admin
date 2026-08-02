@@ -268,7 +268,6 @@ export default function App(): React.JSX.Element {
       setMapCenter([mappedIncident.location.lat, mappedIncident.location.lng]);
       triggerAlertSound();
     });
-
     return () => {
       socket.disconnect();
     };
