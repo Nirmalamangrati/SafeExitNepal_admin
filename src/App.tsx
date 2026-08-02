@@ -261,7 +261,6 @@ export default function App(): React.JSX.Element {
         },
         locationName: newIncident.locationName || "Command Center Override",
         status: (newIncident.status as SOSAlertPayload["status"]) || "PENDING",
-
         incidentCategory:
           newIncident.incidentType || newIncident.incidentCategory || "GENERAL",
       };
