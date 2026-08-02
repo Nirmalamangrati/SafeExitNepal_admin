@@ -259,7 +259,6 @@ export default function App(): React.JSX.Element {
           lat: Number(newIncident.latitude) || 27.7172,
           lng: Number(newIncident.longitude) || 85.324,
         },
-
         locationName: newIncident.locationName || "Command Center Override",
 
         status: (newIncident.status as SOSAlertPayload["status"]) || "PENDING",
