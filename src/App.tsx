@@ -282,7 +282,6 @@ export default function App(): React.JSX.Element {
         `${SOCKET_SERVER_URL}/api/incidents/${eventId}/status`,
         {
           method: "PATCH",
-
           headers: {
             "Content-Type": "application/json",
           },
