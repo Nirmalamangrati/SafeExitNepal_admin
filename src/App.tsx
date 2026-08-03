@@ -327,7 +327,6 @@ export default function App(): React.JSX.Element {
       console.error(err);
     }
   };
-
   /*MANUAL ALERT SUBMIT*/
 
   const handleManualAlertSubmit = async (e: React.FormEvent) => {
