@@ -311,7 +311,6 @@ export default function App(): React.JSX.Element {
     if (!window.confirm("Are you sure you want to delete this incident?")) {
       return;
     }
-
     try {
       const response = await fetch(
         `${SOCKET_SERVER_URL}/api/incidents/${eventId}`,
