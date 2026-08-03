@@ -477,7 +477,6 @@ export default function App(): React.JSX.Element {
           <button
             onClick={() => {
               localStorage.removeItem("userLoggedIn");
-
               setIsAuthenticated(false);
             }}
             className="px-3 py-2 rounded-lg text-xs font-bold bg-zinc-800 text-red-400 border border-red-500/20 hover:bg-red-500 hover:text-white transition-all"
