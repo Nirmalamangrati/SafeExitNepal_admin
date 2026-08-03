@@ -306,7 +306,6 @@ export default function App(): React.JSX.Element {
       console.error(err);
     }
   };
-
   /*   DELETE INCIDENT*/
 
   const handleDelete = async (eventId: string) => {
