@@ -501,7 +501,6 @@ export default function App(): React.JSX.Element {
                   className="bg-[#111c40] border border-slate-800 rounded-xl p-5 cursor-pointer hover:border-cyan-400 transition-all"
                 >
                   {/* STATUS */}
-
                   <div
                     className={`inline-block text-[10px] font-bold px-2 py-1 rounded mb-3 ${
                       alert.status === "RESOLVED"
