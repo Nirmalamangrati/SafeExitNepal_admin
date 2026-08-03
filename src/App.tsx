@@ -307,7 +307,6 @@ export default function App(): React.JSX.Element {
     }
   };
   /*   DELETE INCIDENT*/
-
   const handleDelete = async (eventId: string) => {
     if (!window.confirm("Are you sure you want to delete this incident?")) {
       return;
