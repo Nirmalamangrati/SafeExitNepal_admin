@@ -491,7 +491,6 @@ export default function App(): React.JSX.Element {
         {currentTab === "incidents" && (
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
             {/* LEFT */}
-
             <div className="lg:col-span-3 space-y-4">
               {criticalAlerts.map((alert) => (
                 <div
