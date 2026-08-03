@@ -486,7 +486,6 @@ export default function App(): React.JSX.Element {
         </div>
       </header>
       {/*MAIN CONTENT*/}
-
       <main className="p-6 max-w-7xl mx-auto">
         {/* INCIDENTS */}
 
