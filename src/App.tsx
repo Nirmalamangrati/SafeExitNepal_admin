@@ -473,9 +473,7 @@ export default function App(): React.JSX.Element {
               Manual Alert
             </button>
           </nav>
-
           {/* LOGOUT */}
-
           <button
             onClick={() => {
               localStorage.removeItem("userLoggedIn");
