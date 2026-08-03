@@ -331,7 +331,6 @@ export default function App(): React.JSX.Element {
   const handleManualAlertSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const latVal = parseFloat(manualLat) || 27.7172;
-
     const lngVal = parseFloat(manualLng) || 85.324;
 
     const fakeIncident = {
