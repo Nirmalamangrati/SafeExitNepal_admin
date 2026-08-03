@@ -332,7 +332,6 @@ export default function App(): React.JSX.Element {
     e.preventDefault();
     const latVal = parseFloat(manualLat) || 27.7172;
     const lngVal = parseFloat(manualLng) || 85.324;
-
     const fakeIncident = {
       incidentCategory: manualCategory.toLowerCase(),
 
