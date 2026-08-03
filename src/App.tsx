@@ -488,7 +488,6 @@ export default function App(): React.JSX.Element {
       {/*MAIN CONTENT*/}
       <main className="p-6 max-w-7xl mx-auto">
         {/* INCIDENTS */}
-
         {currentTab === "incidents" && (
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
             {/* LEFT */}
