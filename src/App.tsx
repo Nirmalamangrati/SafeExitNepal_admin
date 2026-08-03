@@ -318,7 +318,6 @@ export default function App(): React.JSX.Element {
           method: "DELETE",
         },
       );
-
       if (response.ok) {
         setCriticalAlerts((prev) =>
           prev.filter((alert) => alert.eventId !== eventId),
