@@ -285,13 +285,11 @@ export default function App(): React.JSX.Element {
           headers: {
             "Content-Type": "application/json",
           },
-
           body: JSON.stringify({
             status: newStatus,
           }),
         },
       );
-
       if (response.ok) {
         setCriticalAlerts((prev) =>
           prev.map((alert) =>
