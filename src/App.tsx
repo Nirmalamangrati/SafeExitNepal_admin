@@ -514,7 +514,6 @@ export default function App(): React.JSX.Element {
                   >
                     {alert.status}
                   </div>
-
                   {/* DETAILS */}
 
                   <div className="space-y-1 text-sm">
