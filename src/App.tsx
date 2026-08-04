@@ -544,7 +544,6 @@ export default function App(): React.JSX.Element {
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
-
                           updateIncidentStatus(alert.eventId, "APPROVED");
                         }}
                         className="px-3 py-1.5 rounded-md border border-blue-500 text-blue-400 text-xs font-bold hover:bg-blue-500/10 cursor-pointer"
