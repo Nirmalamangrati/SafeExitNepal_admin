@@ -528,7 +528,6 @@ export default function App(): React.JSX.Element {
                     </p>
                   </div>
                   {/* BUTTONS */}
-
                   <div className="flex flex-wrap gap-2 mt-4">
                     {alert.status === "PENDING" && (
                       <button
