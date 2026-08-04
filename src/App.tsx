@@ -540,7 +540,6 @@ export default function App(): React.JSX.Element {
                         Approve
                       </button>
                     )}
-
                     {alert.status === "ESCALATED_TO_POLICE" && (
                       <button
                         onClick={(e) => {
