@@ -527,7 +527,6 @@ export default function App(): React.JSX.Element {
                       {alert.locationName || "Kapan, Kathmandu"}
                     </p>
                   </div>
-
                   {/* BUTTONS */}
 
                   <div className="flex flex-wrap gap-2 mt-4">
