@@ -551,7 +551,6 @@ export default function App(): React.JSX.Element {
                         Approve Feed
                       </button>
                     )}
-
                     {alert.status === "PENDING" && (
                       <button
                         onClick={(e) => {
