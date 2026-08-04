@@ -593,7 +593,6 @@ export default function App(): React.JSX.Element {
                       <ExternalLink size={12} />
                       Maps
                     </button>
-
                     {/* DELETE */}
 
                     <button
