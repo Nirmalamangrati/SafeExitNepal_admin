@@ -583,7 +583,6 @@ export default function App(): React.JSX.Element {
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
-
                         window.open(
                           `https://google.com/maps?q=${alert.location.lat},${alert.location.lng}`,
                           "_blank",
