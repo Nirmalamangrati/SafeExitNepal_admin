@@ -579,7 +579,6 @@ export default function App(): React.JSX.Element {
                         Resolve
                       </button>
                     )}
-
                     {/* MAP */}
 
                     <button
