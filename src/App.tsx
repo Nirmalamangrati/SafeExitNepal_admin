@@ -522,7 +522,6 @@ export default function App(): React.JSX.Element {
                     <p>
                       <strong>Category:</strong> {alert.incidentCategory}
                     </p>
-
                     <p>
                       <strong>Location:</strong>{" "}
                       {alert.locationName || "Kapan, Kathmandu"}
