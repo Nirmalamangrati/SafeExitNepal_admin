@@ -519,7 +519,6 @@ export default function App(): React.JSX.Element {
                     <p>
                       <strong>Reporter:</strong> {alert.victim}
                     </p>
-
                     <p>
                       <strong>Category:</strong> {alert.incidentCategory}
                     </p>
