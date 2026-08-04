@@ -580,7 +580,6 @@ export default function App(): React.JSX.Element {
                       </button>
                     )}
                     {/* MAP */}
-
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
