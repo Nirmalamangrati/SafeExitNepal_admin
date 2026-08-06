@@ -642,7 +642,6 @@ export default function App(): React.JSX.Element {
             </div>
           </div>
         )}
-
         {/* RESOURCES */}
 
         {currentTab === "resources" && (
