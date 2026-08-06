@@ -623,7 +623,6 @@ export default function App(): React.JSX.Element {
                   attribution="&copy; OpenStreetMap contributors"
                   url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 />
-
                 {criticalAlerts.map((alert) => (
                   <Marker
                     key={alert.eventId}
