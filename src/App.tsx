@@ -654,7 +654,6 @@ export default function App(): React.JSX.Element {
             <AnalyticsTab criticalAlerts={criticalAlerts} />
           </div>
         )}
-
         {/* MANUAL ALERT */}
 
         {currentTab === "manual" && (
