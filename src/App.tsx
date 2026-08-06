@@ -643,11 +643,9 @@ export default function App(): React.JSX.Element {
           </div>
         )}
         {/* RESOURCES */}
-
         {currentTab === "resources" && (
           <ResourcesTab initialShelters={shelters} />
         )}
-
         {/* ANALYTICS */}
 
         {currentTab === "analytics" && (
