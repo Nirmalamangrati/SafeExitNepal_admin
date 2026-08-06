@@ -594,7 +594,6 @@ export default function App(): React.JSX.Element {
                       Maps
                     </button>
                     {/* DELETE */}
-
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
