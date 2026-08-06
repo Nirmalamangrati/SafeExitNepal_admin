@@ -555,7 +555,6 @@ export default function App(): React.JSX.Element {
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
-
                           updateIncidentStatus(
                             alert.eventId,
                             "ESCALATED_TO_POLICE",
