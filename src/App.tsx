@@ -619,7 +619,6 @@ export default function App(): React.JSX.Element {
                 }}
               >
                 <ChangeView center={mapCenter} />
-
                 <TileLayer
                   attribution="&copy; OpenStreetMap contributors"
                   url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
