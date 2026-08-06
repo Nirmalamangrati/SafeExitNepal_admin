@@ -597,7 +597,6 @@ export default function App(): React.JSX.Element {
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
-
                         handleDelete(alert.eventId);
                       }}
                       className="px-3 py-1.5 rounded-md bg-red-600 hover:bg-red-700 text-white text-xs font-bold transition-colors"
