@@ -647,7 +647,6 @@ export default function App(): React.JSX.Element {
           <ResourcesTab initialShelters={shelters} />
         )}
         {/* ANALYTICS */}
-
         {currentTab === "analytics" && (
           <div className="bg-[#111c40] border border-slate-800 rounded-xl p-6">
             <h2 className="text-lg font-bold mb-4">Analytics Dashboard</h2>
