@@ -608,7 +608,6 @@ export default function App(): React.JSX.Element {
                 </div>
               ))}
             </div>
-
             {/* MAP */}
 
             <div className="lg:col-span-2 h-[700px] rounded-xl overflow-hidden border border-slate-800">
