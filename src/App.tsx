@@ -566,7 +566,6 @@ export default function App(): React.JSX.Element {
                         Escalate
                       </button>
                     )}
-
                     {alert.status !== "RESOLVED" && (
                       <button
                         onClick={(e) => {
