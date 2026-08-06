@@ -461,7 +461,6 @@ export default function App(): React.JSX.Element {
             >
               Analytics
             </button>
-
             <button
               onClick={() => setCurrentTab("manual")}
               className={`px-4 py-2 rounded-lg text-xs font-bold transition-all ${
