@@ -655,7 +655,6 @@ export default function App(): React.JSX.Element {
           </div>
         )}
         {/* MANUAL ALERT */}
-
         {currentTab === "manual" && (
           <ManualTab
             manualType={manualType}
