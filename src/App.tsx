@@ -426,7 +426,6 @@ export default function App(): React.JSX.Element {
 
           <h1 className="text-xl font-black text-red-500">SafeExit Nepal</h1>
         </div>
-
         <div className="flex items-center gap-4">
           <nav className="flex gap-2">
             <button
